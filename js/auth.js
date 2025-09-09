@@ -23,6 +23,8 @@ function isAuthenticated() {
 
 async function login(email, password) {
     try {
+        console.log("📨 Enviando datos de login:", { email, password });
+
         const response = await fetch(`${API_URL}/users/login`, {
             method: 'POST',
             headers: {
@@ -32,6 +34,7 @@ async function login(email, password) {
         });
 
         const data = await response.json();
+        console.log("📥 Respuesta backend:", data);
 
         if (!response.ok) {
             throw new Error(data.error || 'Error al iniciar sesión');
@@ -40,6 +43,7 @@ async function login(email, password) {
         saveToken(data.token);
         return { success: true, data };
     } catch (error) {
+        console.error("❌ Error en login:", error.message);
         return { success: false, error: error.message };
     }
 }
