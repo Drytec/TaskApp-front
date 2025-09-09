@@ -1,5 +1,5 @@
 // password-recovery.js
-const API_URL = NEX_PUBLIC_API_URL.env; 
+const API_URL = "https://taskapp-aaph.onrender.com/api";
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     const emailInput = document.getElementById('email');

@@ -1,5 +1,4 @@
-const API_URL = NEX_PUBLIC_API_URL.env; 
-
+const API_URL = "https://taskapp-aaph.onrender.com/api";
 
 
 function saveToken(token) {
