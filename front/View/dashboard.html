@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskApp - Mis Tareas</title>
+    <link rel="stylesheet" href="../CSS/dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="welcome-dashboard.html" class="logo-link">
+                <h1 class="logo">TicTask</h1>
+            </a>
+        </div>
+        
+        <div class="header-center">
+            <div class="search-container">
+                <div class="search-icon">🔍</div>
+                <input type="text" class="search-input" placeholder="Buscar tareas..." id="searchInput">
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="new-task-btn" onclick="goToNewTask()">Nueva tarea</button>
+            <div class="user-menu" onclick="toggleDropdown()">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span class="user-name" id="userName">Usuario</span>
+                <div class="dropdown-icon">▼</div>
+                
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu" id="userDropdown">
+                    <div class="dropdown-item" onclick="goToProfile()">
+                        <span class="dropdown-icon-item">👤</span>
+                        <span>Mi perfil</span>
+                    </div>
+                    <div class="dropdown-item" onclick="goToSettings()">
+                        <span class="dropdown-icon-item">⚙️</span>
+                        <span>Configuración</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item logout" onclick="handleLogout()">
+                        <span class="dropdown-icon-item">🚪</span>
+                        <span>Cerrar sesión</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Title -->
+        <div class="page-header">
+            <div class="page-title">
+                <span class="title-icon">📋</span>
+                <h1>Mis Tareas</h1>
+            </div>
+            <div class="view-controls">
+                <button class="view-btn active">📊 Kanban</button>
+                <button class="view-btn">📝 Lista</button>
+            </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" style="text-align: center; padding: 40px; display: none;">
+            <h3>Cargando tareas...</h3>
+        </div>
+
+        <!-- Kanban Board -->
+        <div class="kanban-board" id="kanbanBoard">
+            <!-- Por hacer Column -->
+            <div class="kanban-column">
+                <div class="column-header por-hacer">
+                    <div class="column-title">
+                        <span class="column-icon">📝</span>
+                        <span>Por hacer</span>
+                    </div>
+                    <span class="task-count" id="todoCount">0</span>
+                </div>
+                
+                <div class="column-content" id="todoColumn">
+                    <!-- Las tareas se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+
+            <!-- En progreso Column -->
+            <div class="kanban-column">
+                <div class="column-header en-progreso">
+                    <div class="column-title">
+                        <span class="column-icon">⚡</span>
+                        <span>Haciendo</span>
+                    </div>
+                    <span class="task-count" id="inProgressCount">0</span>
+                </div>
+                
+                <div class="column-content" id="inProgressColumn">
+                    <!-- Las tareas se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Completado Column -->
+            <div class="kanban-column">
+                <div class="column-header completado">
+                    <div class="column-title">
+                        <span class="column-icon">✅</span>
+                        <span>Hecho</span>
+                    </div>
+                    <span class="task-count" id="completedCount">0</span>
+                </div>
+                
+                <div class="column-content" id="completedColumn">
+                    <!-- Las tareas se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/js/auth.js"></script>
+    <script src="/js/tasks.js"></script>
+    <script>
+        let allTasks = []; // Almacenar todas las tareas para búsqueda
+
+        // Verificar autenticación al cargar
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (!isAuthenticated()) {
+                window.location.href = '/login';
+                return;
+            }
+
+            // Cargar información del usuario
+            loadUserInfo();
+            
+            // Cargar tareas
+            await loadAllTasks();
+        });
+
+        // Cargar información del usuario desde el token
+        function loadUserInfo() {
+            const token = getToken();
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const userName = payload.email.split('@')[0];
+                    
+                    document.getElementById('userName').textContent = userName;
+                    document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+                } catch (e) {
+                    console.error('Error decodificando token:', e);
+                }
+            }
+        }
+
+        // Cargar todas las tareas
+        async function loadAllTasks() {
+            // Mostrar indicador de carga
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('kanbanBoard').style.display = 'none';
+
+            const result = await getAllTasks();
+            
+            if (result.success) {
+                allTasks = result.data;
+                displayTasks(allTasks);
+            } else {
+                console.error('Error cargando tareas:', result.error);
+                alert('Error al cargar las tareas');
+            }
+
+            // Ocultar indicador de carga
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('kanbanBoard').style.display = 'flex';
+        }
+
+        // Mostrar tareas en el tablero Kanban
+        function displayTasks(tasks) {
+            // Limpiar columnas
+            document.getElementById('todoColumn').innerHTML = '';
+            document.getElementById('inProgressColumn').innerHTML = '';
+            document.getElementById('completedColumn').innerHTML = '';
+
+            // Contadores
+            let todoCount = 0;
+            let inProgressCount = 0;
+            let completedCount = 0;
+
+            // Distribuir tareas en columnas según su estado
+            tasks.forEach(task => {
+                const taskCard = createTaskCard(task);
+                
+                // Usar el campo status para determinar la columna
+                if (task.status === 'Hecho' || task.isComplete) {
+                    document.getElementById('completedColumn').appendChild(taskCard);
+                    completedCount++;
+                } else if (task.status === 'Haciendo') {
+                    document.getElementById('inProgressColumn').appendChild(taskCard);
+                    inProgressCount++;
+                } else {
+                    // Por defecto, 'Por hacer'
+                    document.getElementById('todoColumn').appendChild(taskCard);
+                    todoCount++;
+                }
+            });
+
+            // Actualizar contadores
+            document.getElementById('todoCount').textContent = todoCount;
+            document.getElementById('inProgressCount').textContent = inProgressCount;
+            document.getElementById('completedCount').textContent = completedCount;
+        }
+
+        // Crear elemento de tarjeta de tarea
+        function createTaskCard(task) {
+            const card = document.createElement('div');
+            card.className = 'task-card' + (task.isComplete || task.status === 'Hecho' ? ' completed' : '');
+            card.dataset.taskId = task._id;
+
+            // Determinar prioridad (basado en isImportant)
+            const priority = task.isImportant ? 'alta' : 'media';
+            
+            // Formatear fecha y hora de vencimiento si existen
+            let dueDateDisplay = '';
+            if (task.dueDate) {
+                dueDateDisplay = `<span class="task-due-date">📅 Vence: ${formatDate(task.dueDate)}</span>`;
+                if (task.dueTime) {
+                    dueDateDisplay += `<span class="task-due-time">⏰ ${task.dueTime}</span>`;
+                }
+            }
+
+            // Obtener el estado actual
+            const status = task.status || (task.isComplete ? 'Hecho' : 'Por hacer');
+
+            card.innerHTML = `
+                <h3 class="task-title">${task.taskName}</h3>
+                ${task.taskDescription ? `<p class="task-description">${task.taskDescription}</p>` : ''}
+                <div class="task-meta">
+                    <span class="task-time">📅 Creada: ${formatDate(task.dateCreated)}</span>
+                    <span class="task-priority ${priority}">${priority.charAt(0).toUpperCase() + priority.slice(1)}</span>
+                    <span class="task-status">${status}</span>
+                    ${dueDateDisplay}
+                </div>
+                <div class="task-actions">
+                    <button class="action-btn complete" onclick="toggleTaskComplete('${task._id}', ${!(task.isComplete || task.status === 'Hecho')})" title="${task.isComplete || task.status === 'Hecho' ? 'Marcar como pendiente' : 'Marcar como completada'}">
+                        ${task.isComplete || task.status === 'Hecho' ? '↩️' : '✅'}
+                    </button>
+                    <button class="action-btn important" onclick="toggleTaskImportant('${task._id}', ${!task.isImportant})" title="${task.isImportant ? 'Quitar importancia' : 'Marcar como importante'}">
+                        ${task.isImportant ? '⭐' : '☆'}
+                    </button>
+                    <button class="action-btn edit" onclick="editTask('${task._id}')" title="Editar tarea">✏️</button>
+                    <button class="action-btn delete" onclick="deleteTaskById('${task._id}')" title="Eliminar tarea">🗑️</button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Formatear fecha
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            if (date.toDateString() === today.toDateString()) {
+                return `Hoy ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return `Ayer ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+            } else {
+                return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            }
+        }
+
+        // Marcar tarea como completada/pendiente
+        async function toggleTaskComplete(taskId, isComplete) {
+            // Actualizar tanto isComplete como status
+            const status = isComplete ? 'Por hacer' : 'Hecho';
+            const result = await updateTask(taskId, { isComplete, status });
+            
+            if (result.success) {
+                await loadAllTasks(); // Recargar tareas
+            } else {
+                alert('Error al actualizar la tarea: ' + result.error);
+            }
+        }
+
+        // Marcar tarea como importante/normal
+        async function toggleTaskImportant(taskId, isImportant) {
+            const result = await updateTask(taskId, { isImportant });
+            
+            if (result.success) {
+                await loadAllTasks(); // Recargar tareas
+            } else {
+                alert('Error al actualizar la tarea: ' + result.error);
+            }
+        }
+
+        // Eliminar tarea
+        async function deleteTaskById(taskId) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
+                const result = await deleteTask(taskId);
+                
+                if (result.success) {
+                    await loadAllTasks(); // Recargar tareas
+                } else {
+                    alert('Error al eliminar la tarea: ' + result.error);
+                }
+            }
+        }
+
+        // Editar tarea
+        async function editTask(taskId) {
+            // Obtener la tarea actual
+            const result = await getTask(taskId);
+            
+            if (!result.success) {
+                alert('Error al obtener la tarea: ' + result.error);
+                return;
+            }
+            
+            const task = result.data;
+            
+            // Crear un modal para editar la tarea
+            const modal = document.createElement('div');
+            modal.className = 'edit-modal';
+            modal.innerHTML = `
+                <div class="edit-modal-content">
+                    <h2>Editar Tarea</h2>
+                    <form id="editTaskForm">
+                        <div class="form-group">
+                            <label for="editTitle">Título</label>
+                            <input type="text" id="editTitle" value="${task.taskName}" maxlength="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDescription">Descripción</label>
+                            <textarea id="editDescription" maxlength="300">${task.taskDescription || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDueDate">Fecha</label>
+                            <input type="date" id="editDueDate" value="${task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="editDueTime">Hora</label>
+                            <input type="time" id="editDueTime" value="${task.dueTime || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="editStatus">Estado</label>
+                            <select id="editStatus">
+                                <option value="Por hacer" ${task.status === 'Por hacer' ? 'selected' : ''}>Por hacer</option>
+                                <option value="Haciendo" ${task.status === 'Haciendo' ? 'selected' : ''}>Haciendo</option>
+                                <option value="Hecho" ${task.status === 'Hecho' ? 'selected' : ''}>Hecho</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="editIsImportant" ${task.isImportant ? 'checked' : ''}>
+                                Marcar como importante
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
+                            <button type="submit" class="btn-primary">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            // Agregar estilos para el modal
+            const style = document.createElement('style');
+            style.textContent = `
+                .edit-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                }
+                .edit-modal-content {
+                    background-color: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    width: 90%;
+                    max-width: 500px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                }
+                .edit-modal h2 {
+                    margin-top: 0;
+                    margin-bottom: 20px;
+                }
+                .edit-modal .form-group {
+                    margin-bottom: 15px;
+                }
+                .edit-modal label {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-weight: bold;
+                }
+                .edit-modal input[type="text"],
+                .edit-modal textarea,
+                .edit-modal input[type="date"],
+                .edit-modal input[type="time"],
+                .edit-modal select {
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                }
+                .edit-modal textarea {
+                    height: 100px;
+                }
+                .edit-modal .form-actions {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    margin-top: 20px;
+                }
+                .edit-modal .btn-secondary,
+                .edit-modal .btn-primary {
+                    padding: 8px 16px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+                .edit-modal .btn-secondary {
+                    background-color: #f0f0f0;
+                }
+                .edit-modal .btn-primary {
+                    background-color: #4a6cf7;
+                    color: white;
+                }
+            `;
+            
+            document.head.appendChild(style);
+            document.body.appendChild(modal);
+            
+            // Manejar el envío del formulario
+            document.getElementById('editTaskForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const updateData = {
+                    taskName: document.getElementById('editTitle').value.trim(),
+                    taskDescription: document.getElementById('editDescription').value.trim(),
+                    dueDate: document.getElementById('editDueDate').value || null,
+                    dueTime: document.getElementById('editDueTime').value || null,
+                    status: document.getElementById('editStatus').value,
+                    isImportant: document.getElementById('editIsImportant').checked,
+                    isComplete: document.getElementById('editStatus').value === 'Hecho'
+                };
+                
+                const result = await updateTask(taskId, updateData);
+                
+                if (result.success) {
+                    closeEditModal();
+                    await loadAllTasks(); // Recargar tareas
+                } else {
+                    alert('Error al actualizar la tarea: ' + result.error);
+                }
+            });
+        }
+        
+        // Cerrar el modal de edición
+        function closeEditModal() {
+            const modal = document.querySelector('.edit-modal');
+            if (modal) {
+                document.body.removeChild(modal);
+            }
+        }
+
+        // Ir a nueva tarea
+        function goToNewTask() {
+            window.location.href = 'new-task.html';
+        }
+
+        // Búsqueda de tareas
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            if (searchTerm === '') {
+                displayTasks(allTasks);
+            } else {
+                const filteredTasks = allTasks.filter(task => 
+                    task.taskName.toLowerCase().includes(searchTerm) ||
+                    (task.taskDescription && task.taskDescription.toLowerCase().includes(searchTerm))
+                );
+                displayTasks(filteredTasks);
+            }
+        });
+        
+        // Toggle del dropdown menu
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cerrar dropdown si se hace clic fuera
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
+                const dropdown = document.getElementById('userDropdown');
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        }
+
+        // Función de cerrar sesión
+        function handleLogout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                logout(); // Función de auth.js
+            }
+        }
+
+        // Función para ir al perfil
+        function goToProfile() {
+            window.location.href = 'profile.html';
+        }
+
+        // Función para ir a configuración
+        function goToSettings() {
+            alert('Función de configuración - próximamente');
+        }
+    </script>
+</body>
+</html>
