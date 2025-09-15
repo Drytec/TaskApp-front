@@ -4,7 +4,7 @@
     { "source": "/login", "destination": "/login.html" },
     { "source": "/dashboard", "destination": "/dashboard.html" },
     { "source": "/profile", "destination": "/profile.html" },
-    { "source": "/", "destination": "/home.html" },
+    { "source": "/", "destination": "/index.html" },
     { "source": "/signup", "destination": "/signup.html" },
     { "source": "/new-task", "destination": "/new-task.html" },
     { "source": "/welcome-dashboard", "destination": "/welcome-dashboard.html" },
