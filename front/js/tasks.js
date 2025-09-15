@@ -1,5 +1,10 @@
-﻿const API_URL ="https://taskapp-aaph.onrender.com/api";
+// tasks.js
 
+// Usar API_URL y funciones de auth.js si ya existen
+// (Evita doble declaración)
+// ...existing code...
+
+// Function to create a task
 async function createTask(taskData) {
     try {
         const token = getToken();
@@ -16,7 +21,10 @@ async function createTask(taskData) {
             body: JSON.stringify({
                 taskName: taskData.taskName,
                 taskDescription: taskData.taskDescription || '',
-                isImportant: taskData.isImportant || false
+                isImportant: taskData.isImportant || false,
+                dueDate: taskData.dueDate || null,
+                dueTime: taskData.dueTime || null,
+                status: taskData.status || 'Por hacer'
             })
         });
 

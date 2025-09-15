@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskApp - Iniciar Sesión</title>
-    <link rel="stylesheet" href="CSS/login.css">
+    <link rel="stylesheet" href="/src/css/login.css">
 </head>
 <body>
     <div class="container">
@@ -12,6 +12,7 @@
             <div class="header">
                 <h1 class="logo">TicTask</h1>
                 <p class="subtitle">Organiza tu día, cumple tus metas</p>
+                <a href="/home" class="back-to-home">← Volver al inicio</a>
             </div>
             
             <div class="form-container">
@@ -125,7 +126,9 @@
 
             // Función para mostrar error en campo específico
             function showFieldError(fieldId, message) {
+                const input = document.getElementById(fieldId);
                 const errorElement = document.getElementById(fieldId + '-error');
+                input.classList.add('error');      // 👈 borde rojo (añade regla CSS si falta)
                 errorElement.textContent = message;
                 errorElement.classList.add('show');
             }
@@ -177,10 +180,7 @@
                         setTimeout(() => {
                             window.location.href = '/welcome-dashboard';
                         }, 1000);
-                    } else {
-                        showToast('Credenciales incorrectas. Intenta con admin@test.com / 123456', true);
-                        toggleSpinner(false);
-                    }
+                    } 
                 } catch (error) {
                     console.error('Error en login:', error);
                     showToast('Error al iniciar sesión. Intenta nuevamente.', true);
@@ -197,6 +197,53 @@
             document.getElementById('password').addEventListener('input', function() {
                 const errorElement = document.getElementById('password-error');
                 errorElement.classList.remove('show');
+
+            // Manejar envío del formulario
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                clearErrors();
+                
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                // Validaciones locales
+                if (!email) {
+                    showFieldError('email', 'El correo electrónico es requerido');
+                    return;
+                }
+                if (!validateEmail(email)) {
+                    showFieldError('email', 'Ingresa un correo electrónico válido');
+                    return;
+                }
+                if (!password) {
+                    showFieldError('password', 'La contraseña es requerida');
+                    return;
+                }
+
+                toggleSpinner(true);
+
+                try {
+                    // 👇 ahora sí usar la función de auth.js
+                    const result = await login(email, password);
+
+                    if (result.success) {
+                        showToast('¡Inicio de sesión exitoso!');
+                        setTimeout(() => {
+                            window.location.href = '/welcome-dashboard';
+                        }, 1000);
+                    } else {
+                        // Mostrar mensaje de error del backend
+                        showFieldError('password', result.error); // borde rojo + mensaje debajo del input
+                        showToast(result.error, true);            // toast arriba
+                    }
+                } catch (error) {
+                    console.error('Error en login:', error);
+                    showToast('Error al iniciar sesión. Intenta nuevamente.', true);
+                } finally {
+                    toggleSpinner(false); // ✅ siempre apagamos spinner al terminar
+                }
+            });
             });
         });
     </script>
