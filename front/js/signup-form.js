@@ -1,4 +1,5 @@
 
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('.signup-form');
     const firstNameInput = document.getElementById('firstName');
@@ -195,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (result.success) {
             showToast('Cuenta creada con éxito', 'success');
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '/login';
             }, 2000);
         } else {
             showToast(result.error);

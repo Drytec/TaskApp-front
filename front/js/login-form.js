@@ -1,4 +1,5 @@
 
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('.login-form');
     const emailInput = document.getElementById('email');
@@ -94,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (result.success) {
             showToast('¡Inicio de sesión exitoso!', 'success');
             setTimeout(() => {
-                window.location.href = '../View/welcome-dashboard.html'; 
+                window.location.href = '/welcome-dashboard'; 
             }, 1000);
         } else {
             showToast(result.error);

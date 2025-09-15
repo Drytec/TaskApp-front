@@ -1,137 +1,153 @@
-// tasks.js - Versión simulada para pruebas
+// tasks.js
 
-// Simulación de tareas
-let mockTasks = [
-    { id: '1', taskName: 'Completar proyecto', taskDescription: 'Finalizar el proyecto integrador', isComplete: false, isImportant: true, createdAt: new Date().toISOString() },
-    { id: '2', taskName: 'Estudiar para examen', taskDescription: 'Repasar material del curso', isComplete: false, isImportant: false, createdAt: new Date().toISOString() },
-    { id: '3', taskName: 'Hacer ejercicio', taskDescription: '30 minutos de cardio', isComplete: true, isImportant: false, createdAt: new Date().toISOString() }
-];
+// Usar API_URL y funciones de auth.js si ya existen
+// (Evita doble declaración)
+// ...existing code...
 
-// Función para simular respuesta del backend
-async function simulateResponse(success = true, data = {}, delay = 500) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            if (success) {
-                resolve({ success: true, data });
-            } else {
-                resolve({ success: false, error: 'Error simulado para pruebas' });
-            }
-        }, delay);
-    });
-}
-
-// Función para crear una tarea
+// Function to create a task
 async function createTask(taskData) {
     try {
         const token = getToken();
         if (!token) {
-            throw new Error('No autenticado');
+            throw new Error('Not authenticated');
         }
 
-        // Crear nueva tarea simulada
-        const newTask = {
-            id: Date.now().toString(),
-            taskName: taskData.taskName,
-            taskDescription: taskData.taskDescription || '',
-            isImportant: taskData.isImportant || false,
-            isComplete: false,
-            createdAt: new Date().toISOString(),
-            dueDate: taskData.dueDate || null,
-            dueTime: taskData.dueTime || null,
-            status: taskData.status || 'Por hacer'
-        };
+        const response = await fetch(`${API_URL}/tasks`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                taskName: taskData.taskName,
+                taskDescription: taskData.taskDescription || '',
+                isImportant: taskData.isImportant || false,
+                dueDate: taskData.dueDate || null,
+                dueTime: taskData.dueTime || null,
+                status: taskData.status || 'Por hacer'
+            })
+        });
 
-        // Agregar a la lista simulada
-        mockTasks.push(newTask);
+        const data = await response.json();
 
-        return await simulateResponse(true, newTask);
+        if (!response.ok) {
+            throw new Error(data.error || 'Error creating task');
+        }
+
+        return { success: true, data };
     } catch (error) {
-        console.error('Error creando tarea:', error);
         return { success: false, error: error.message };
     }
 }
 
-// Función para obtener todas las tareas
+// Function to get all tasks
 async function getAllTasks() {
     try {
         const token = getToken();
         if (!token) {
-            throw new Error('No autenticado');
+            throw new Error('Not authenticated');
         }
 
-        return await simulateResponse(true, mockTasks);
+        const response = await fetch(`${API_URL}/tasks`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error getting tasks');
+        }
+
+        return { success: true, data };
     } catch (error) {
-        console.error('Error obteniendo tareas:', error);
         return { success: false, error: error.message };
     }
 }
 
-// Función para obtener una tarea por ID
-async function getTaskById(taskId) {
+// Function to update a task
+async function updateTask(taskId, updateData) {
     try {
         const token = getToken();
         if (!token) {
-            throw new Error('No autenticado');
+            throw new Error('Not authenticated');
         }
 
-        const task = mockTasks.find(t => t.id === taskId);
-        if (!task) {
-            return { success: false, error: 'Tarea no encontrada' };
+        const response = await fetch(`${API_URL}/tasks/${taskId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updateData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error updating task');
         }
 
-        return await simulateResponse(true, task);
+        return { success: true, data };
     } catch (error) {
-        console.error('Error obteniendo tarea:', error);
         return { success: false, error: error.message };
     }
 }
 
-// Función para actualizar una tarea
-async function updateTask(taskId, taskData) {
-    try {
-        const token = getToken();
-        if (!token) {
-            throw new Error('No autenticado');
-        }
-
-        const taskIndex = mockTasks.findIndex(t => t.id === taskId);
-        if (taskIndex === -1) {
-            return { success: false, error: 'Tarea no encontrada' };
-        }
-
-        // Actualizar tarea
-        mockTasks[taskIndex] = {
-            ...mockTasks[taskIndex],
-            ...taskData,
-            id: taskId // Asegurar que el ID no cambie
-        };
-
-        return await simulateResponse(true, mockTasks[taskIndex]);
-    } catch (error) {
-        console.error('Error actualizando tarea:', error);
-        return { success: false, error: error.message };
-    }
-}
-
-// Función para eliminar una tarea
+// Function to delete a task
 async function deleteTask(taskId) {
     try {
         const token = getToken();
         if (!token) {
-            throw new Error('No autenticado');
+            throw new Error('Not authenticated');
         }
 
-        const taskIndex = mockTasks.findIndex(t => t.id === taskId);
-        if (taskIndex === -1) {
-            return { success: false, error: 'Tarea no encontrada' };
+        const response = await fetch(`${API_URL}/tasks/${taskId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Error deleting task');
         }
 
-        // Eliminar tarea
-        mockTasks.splice(taskIndex, 1);
-
-        return await simulateResponse(true, { message: 'Tarea eliminada correctamente' });
+        return { success: true };
     } catch (error) {
-        console.error('Error eliminando tarea:', error);
         return { success: false, error: error.message };
     }
 }
+
+// Function to get a specific task
+async function getTask(taskId) {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error('Not authenticated');
+        }
+
+        const response = await fetch(`${API_URL}/tasks/${taskId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error getting task');
+        }
+
+        return { success: true, data };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+console.log('Tasks.js loaded successfully');
+
+// Exponer createTask globalmente para el HTML
+window.createTask = createTask;

@@ -1,1 +1,6 @@
 /backend/
+app.js
+nodeeee.iml
+package-lock.json
+package.json
+.env

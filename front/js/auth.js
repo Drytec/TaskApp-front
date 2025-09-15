@@ -1,19 +1,7 @@
-// Cambiado temporalmente para pruebas
-// const API_URL = 'http://localhost:5100/api';
-const API_URL = 'https://jsonplaceholder.typicode.com';
-
-// Función simulada para registro y login mientras el backend está en desarrollo
-async function simulateBackendResponse(success = true, data = {}, delay = 500) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            if (success) {
-                resolve({ success: true, data });
-            } else {
-                resolve({ success: false, error: 'Error simulado para pruebas' });
-            }
-        }, delay);
-    });
-}
+const API_URL =
+  window.location.hostname.includes("localhost")
+    ? "/api"  
+    : "https://task-app-back.vercel.app/api"; 
 
 
 function saveToken(token) {
@@ -42,9 +30,15 @@ async function checkAuth() {
     }
     
     try {
-        // Simulación de verificación de token
-        // Si hay un token, consideramos que el usuario está autenticado
-        return true;
+        const response = await fetch(`${API_URL}/users/me`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        return response.ok;
     } catch (error) {
         console.error('Error verificando autenticación:', error);
         return false;
@@ -54,23 +48,23 @@ async function checkAuth() {
 
 async function login(email, password) {
     try {
-        // Simulación de login exitoso
-        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJpZCI6IjEyMzQ1NiIsImlhdCI6MTYxNjE1MTYxNn0.hMWCQnQsYDLHAPiOxAqAOmfQfBPrxoWaIkPZUXXYGGE';
-        
-        // Simular verificación de credenciales
-        if (email && password) {
-            const result = await simulateBackendResponse(true, { token: mockToken });
-            
-            if (result.success) {
-                saveToken(result.data.token);
-            }
-            
-            return result;
-        } else {
-            return { success: false, error: 'Credenciales inválidas' };
+        const response = await fetch(`${API_URL}/users/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error al iniciar sesión');
         }
+
+        saveToken(data.token);
+        return { success: true, data };
     } catch (error) {
-        console.error('Error en login:', error);
         return { success: false, error: error.message };
     }
 }
@@ -78,18 +72,22 @@ async function login(email, password) {
 
 async function signup(userData) {
     try {
-        // Simulación de registro exitoso
-        const mockData = { id: '123456', email: userData.email };
-        
-        // Simular verificación de datos
-        if (userData.email && userData.password) {
-            const result = await simulateBackendResponse(true, mockData);
-            return result;
-        } else {
-            return { success: false, error: 'Datos de usuario incompletos' };
+        const response = await fetch(`${API_URL}/users/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error al registrar usuario');
         }
+
+        return { success: true, data };
     } catch (error) {
-        console.error('Error en signup:', error);
         return { success: false, error: error.message };
     }
 }
@@ -97,5 +95,5 @@ async function signup(userData) {
 
 function logout() {
     removeToken();
-    window.location.href = 'login.html';
+    window.location.href = '/login';
 }

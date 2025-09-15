@@ -1,5 +1,9 @@
 // password-recovery.js
-const API_URL = "https://taskapp-aaph.onrender.com/api";
+const API_URL =
+  window.location.hostname.includes("localhost")
+    ? "/api"  
+    : "https://task-app-back.vercel.app/api"; 
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     const emailInput = document.getElementById('email');
