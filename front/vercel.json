@@ -1,14 +1,13 @@
 {
-
   "rewrites": [
-    { "source": "/login", "destination": "/login.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/profile", "destination": "/profile.html" },
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/signup", "destination": "/signup.html" },
-    { "source": "/new-task", "destination": "/new-task.html" },
-    { "source": "/welcome-dashboard", "destination": "/welcome-dashboard.html" },
-    { "source": "/password-recovery", "destination": "/password-recovery.html" },
-    { "source": "/reset-password", "destination": "/reset-password.html" }
+    { "source": "/login", "destination": "/front/login.html" },
+    { "source": "/dashboard", "destination": "/front/dashboard.html" },
+    { "source": "/profile", "destination": "/front/profile.html" },
+    { "source": "/", "destination": "/front/index.html" },
+    { "source": "/signup", "destination": "/front/signup.html" },
+    { "source": "/new-task", "destination": "/front/new-task.html" },
+    { "source": "/welcome-dashboard", "destination": "/front/welcome-dashboard.html" },
+    { "source": "/password-recovery", "destination": "/front/password-recovery.html" },
+    { "source": "/reset-password", "destination": "/front/reset-password.html" }
   ]
 }
