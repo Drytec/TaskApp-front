@@ -1,9 +1,5 @@
 // tasks.js
 
-// Usar API_URL y funciones de auth.js si ya existen
-// (Evita doble declaración)
-// ...existing code...
-
 // Function to create a task
 async function createTask(taskData) {
     try {
