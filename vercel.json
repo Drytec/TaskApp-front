@@ -1,0 +1,21 @@
+{
+  "cleanUrls": true,
+  "builds": [
+    { "src": "front/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "^/$", "dest": "/index.html" },
+
+
+    { "src": "^/(login)/?$", "dest": "/login.html" },
+    { "src": "^/(signup)/?$", "dest": "/signup.html" },
+    { "src": "^/(dashboard)/?$", "dest": "/dashboard.html" },
+    { "src": "^/(profile)/?$", "dest": "/profile.html" },
+    { "src": "^/(new-task)/?$", "dest": "/new-task.html" },
+    { "src": "^/(welcome-dashboard)/?$", "dest": "/welcome-dashboard.html" },
+    { "src": "^/(password-recovery)/?$", "dest": "/password-recovery.html" },
+    { "src": "^/(reset-password)/?$", "dest": "/reset-password.html" },
+
+    { "src": "^/(.*)$", "dest": "/$1.html" }
+  ]
+}
