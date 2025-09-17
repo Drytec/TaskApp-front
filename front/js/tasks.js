@@ -35,7 +35,7 @@ async function createTask(taskData) {
                 taskName: taskData.taskName,
                 taskDescription: taskData.taskDescription || '',
                 isImportant: taskData.isImportant || false,
-                dueDate: taskData.dueDate || null,
+                dueDate: taskData.dueDate ? taskData.dueDate.split("T")[0] : null,
                 dueTime: taskData.dueTime || null,
                 status: taskData.status || 'Por hacer'
             })
@@ -93,7 +93,11 @@ async function updateTask(taskId, updateData) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(updateData)
+            body: JSON.stringify({
+                ...updateData,
+                
+                dueDate: updateData.dueDate ? updateData.dueDate.split("T")[0] : null
+            })
         });
 
         const data = await response.json();
