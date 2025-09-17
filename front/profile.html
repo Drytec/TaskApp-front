@@ -111,7 +111,7 @@
                 }
                 
                 // Hacer petición al servidor para obtener datos del usuario
-                const response = await fetch('http://localhost:5100/api/users/me', {
+                const response = await fetch(`${API_URL}/users/me`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
