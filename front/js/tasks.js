@@ -5,6 +5,23 @@
 // ...existing code...
 
 // Function to create a task
+
+function validateTask(taskData) {
+    if (!taskData.taskName || taskData.taskName.trim() === "") {
+        return "⚠️ El título es obligatorio";
+    }
+    if (taskData.taskName.length > 50) {
+        return "⚠️ El título no puede superar 50 caracteres";
+    }
+    if (taskData.taskDescription && taskData.taskDescription.length > 300) {
+        return "⚠️ La descripción no puede superar 300 caracteres";
+    }
+    if (!["Por hacer", "Haciendo", "Hecho"].includes(taskData.status)) {
+        return "⚠️ Estado inválido";
+    }
+    return null; // ✅ sin errores
+}
+
 async function createTask(taskData) {
     try {
         const token = getToken();
@@ -149,5 +166,10 @@ async function getTask(taskId) {
 
 console.log('Tasks.js loaded successfully');
 
-// Exponer createTask globalmente para el HTML
+
 window.createTask = createTask;
+window.getAllTasks = getAllTasks;
+window.updateTask = updateTask;
+window.deleteTask = deleteTask;
+window.getTask = getTask;
+window.validateTask = validateTask; 

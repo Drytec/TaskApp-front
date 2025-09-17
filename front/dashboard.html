@@ -164,6 +164,7 @@
             if (result.success) {
                 allTasks = result.data;
                 displayTasks(allTasks);
+                enableDragAndDrop();   
             } else {
                 console.error('Error cargando tareas:', result.error);
                 alert('Error al cargar las tareas');
@@ -215,43 +216,25 @@
             const card = document.createElement('div');
             card.className = 'task-card' + (task.isComplete || task.status === 'Hecho' ? ' completed' : '');
             card.dataset.taskId = task._id;
+            card.draggable = true; // 👈 permite arrastrar
 
-            // Determinar prioridad (basado en isImportant)
-            const priority = task.isImportant ? 'alta' : 'media';
-            
-            // Formatear fecha y hora de vencimiento si existen
-            let dueDateDisplay = '';
-            if (task.dueDate) {
-                dueDateDisplay = `<span class="task-due-date">📅 Vence: ${formatDate(task.dueDate)}</span>`;
-                if (task.dueTime) {
-                    dueDateDisplay += `<span class="task-due-time">⏰ ${task.dueTime}</span>`;
-                }
-            }
+            // Listeners de drag
+            card.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('taskId', task._id);
+            });
 
-            // Obtener el estado actual
-            const status = task.status || (task.isComplete ? 'Hecho' : 'Por hacer');
-
+            // ... tu innerHTML se queda igual ...
             card.innerHTML = `
                 <h3 class="task-title">${task.taskName}</h3>
                 ${task.taskDescription ? `<p class="task-description">${task.taskDescription}</p>` : ''}
                 <div class="task-meta">
                     <span class="task-time">📅 Creada: ${formatDate(task.dateCreated)}</span>
-                    <span class="task-priority ${priority}">${priority.charAt(0).toUpperCase() + priority.slice(1)}</span>
-                    <span class="task-status">${status}</span>
-                    ${dueDateDisplay}
-                </div>
-                <div class="task-actions">
-                    <button class="action-btn complete" onclick="toggleTaskComplete('${task._id}', ${!(task.isComplete || task.status === 'Hecho')})" title="${task.isComplete || task.status === 'Hecho' ? 'Marcar como pendiente' : 'Marcar como completada'}">
-                        ${task.isComplete || task.status === 'Hecho' ? '↩️' : '✅'}
-                    </button>
-                    <button class="action-btn important" onclick="toggleTaskImportant('${task._id}', ${!task.isImportant})" title="${task.isImportant ? 'Quitar importancia' : 'Marcar como importante'}">
-                        ${task.isImportant ? '⭐' : '☆'}
-                    </button>
-                    <button class="action-btn edit" onclick="editTask('${task._id}')" title="Editar tarea">✏️</button>
-                    <button class="action-btn delete" onclick="deleteTaskById('${task._id}')" title="Eliminar tarea">🗑️</button>
+                    <span class="task-priority ${task.isImportant ? 'alta' : 'media'}">
+                    ${task.isImportant ? 'Alta' : 'Media'}
+                    </span>
+                    <span class="task-status">${task.status}</span>
                 </div>
             `;
-
             return card;
         }
 
@@ -524,6 +507,42 @@
         function goToSettings() {
             alert('Función de configuración - próximamente');
         }
+
+        // Habilitar drag and drop en columnas
+        function enableDragAndDrop() {
+            const columns = [
+                { id: 'todoColumn', newStatus: 'Por hacer' },
+                { id: 'inProgressColumn', newStatus: 'Haciendo' },
+                { id: 'completedColumn', newStatus: 'Hecho' }
+            ];
+
+            columns.forEach(col => {
+                const element = document.getElementById(col.id);
+
+                element.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // necesario para permitir drop
+                });
+
+                element.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    const taskId = e.dataTransfer.getData('taskId');
+                    if (!taskId) return;
+
+                    // Actualizar status en DB
+                    const result = await updateTask(taskId, { status: col.newStatus, 
+                                                            isComplete: col.newStatus === "Hecho" });
+
+                    if (result.success) {
+                        await loadAllTasks(); // recargar tareas
+                    } else {
+                        alert('❌ Error al mover tarea: ' + result.error);
+                    }
+                });
+            });
+        }
+
+        
+
     </script>
 </body>
 </html>

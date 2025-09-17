@@ -463,3 +463,19 @@ body {
         justify-content: center;
     }
 }
+
+    .column-content {
+    min-height: 200px;
+    border: 2px dashed transparent;
+    transition: border-color 0.2s ease;
+    }
+    .column-content.dragover {
+    border-color: #6366f1;
+    background-color: #f9fafb;
+    }
+    .task-card {
+    cursor: grab;
+    }
+    .task-card:active {
+    cursor: grabbing;
+    }
