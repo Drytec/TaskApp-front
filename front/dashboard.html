@@ -59,7 +59,6 @@
             </div>
             <div class="view-controls">
                 <button class="view-btn active">📊 Kanban</button>
-                <button class="view-btn">📝 Lista</button>
             </div>
         </div>
 
@@ -228,17 +227,86 @@
                 <h3 class="task-title">${task.taskName}</h3>
                 ${task.taskDescription ? `<p class="task-description">${task.taskDescription}</p>` : ''}
                 <div class="task-meta">
-                    <span class="task-time">📅 Creada: ${formatDate(task.dateCreated)}</span>
+                    ${task.dueDate ? `<span class="task-time">📅 Vence: ${formatDueDate(task.dueDate, task.dueTime)}</span>` : ''}
                     <span class="task-priority ${task.isImportant ? 'alta' : 'media'}">
                     ${task.isImportant ? 'Alta' : 'Media'}
                     </span>
                     <span class="task-status">${task.status}</span>
                 </div>
+                <div class="task-actions">
+                    <!-- Botón importante -->
+                    <button class="action-btn important" onclick="toggleTaskImportant('${task._id}', ${!task.isImportant})" 
+                    title="${task.isImportant ? 'Quitar importancia' : 'Marcar como importante'}">
+                    ${task.isImportant ? '⭐' : '☆'}
+                    </button>
+                    <!-- Botón editar -->
+                    <button class="action-btn edit" onclick="editTask('${task._id}')" title="Editar tarea">✏️</button>
+                    <!-- Botón eliminar -->
+                    <button class="action-btn delete" onclick="deleteTaskById('${task._id}')" title="Eliminar tarea">🗑️</button>
+                </div>
             `;
             return card;
         }
 
-        // Formatear fecha
+        // Formatear fecha de vencimiento
+        function formatDueDate(dateString, timeString) {
+            if (!dateString) return '';
+            
+            // Si viene en formato YYYY-MM-DD, convertir a formato español
+            if (typeof dateString === 'string' && dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                const [year, month, day] = dateString.split('-');
+                const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+
+                let dateText = '';
+                if (date.toDateString() === today.toDateString()) {
+                    dateText = 'Hoy';
+                } else if (date.toDateString() === tomorrow.toDateString()) {
+                    dateText = 'Mañana';
+                } else if (date.toDateString() === yesterday.toDateString()) {
+                    dateText = 'Ayer';
+                } else {
+                    dateText = date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                }
+
+                // Agregar hora si existe
+                if (timeString) {
+                    const time = new Date(`2000-01-01T${timeString}`);
+                    const timeFormatted = time.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                    return `${dateText} a las ${timeFormatted}`;
+                }
+
+                return dateText;
+            }
+            
+            // Fallback para otros formatos
+            return dateString;
+        }
+
+        // Formatear fecha para input de tipo date
+        function formatDateForInput(dateString) {
+            if (!dateString) return '';
+            
+            // Si ya está en formato YYYY-MM-DD, devolverlo tal como está
+            if (typeof dateString === 'string' && dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                return dateString;
+            }
+            
+            // Para otros formatos, extraer solo la parte de fecha
+            if (typeof dateString === 'string' && dateString.includes('T')) {
+                return dateString.split('T')[0];
+            }
+            
+            // Fallback
+            return dateString;
+        }
+
+        // Formatear fecha de creación (mantener para compatibilidad)
         function formatDate(dateString) {
             const date = new Date(dateString);
             const today = new Date();
@@ -320,7 +388,7 @@
                         </div>
                         <div class="form-group">
                             <label for="editDueDate">Fecha</label>
-                            <input type="date" id="editDueDate" value="${task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ''}">
+                            <input type="date" id="editDueDate" value="${task.dueDate ? formatDateForInput(task.dueDate) : ''}">
                         </div>
                         <div class="form-group">
                             <label for="editDueTime">Hora</label>

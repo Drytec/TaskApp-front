@@ -131,6 +131,11 @@
         status:document.getElementById('status').value
       };
 
+      // Debug: mostrar los datos que se van a enviar
+      console.log('Datos de la tarea a enviar:', taskData);
+      console.log('DueDate original del input:', document.getElementById('dueDate').value);
+      console.log('DueDate en taskData:', taskData.dueDate);
+
       const error=validateTask(taskData);
       if(error){ showModal(error,"error"); return; }
 
