@@ -276,10 +276,25 @@
 
                 // Agregar hora si existe
                 if (timeString) {
-                    const time = new Date(`2000-01-01T${timeString}`);
-                    const timeFormatted = time.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-                    return `${dateText} a las ${timeFormatted}`;
+                    let hours = "";
+                    let minutes = "";
+
+                    // Caso: si viene solo como "HH:mm"
+                    if (/^\d{2}:\d{2}$/.test(timeString)) {
+                        [hours, minutes] = timeString.split(":");
+                    }
+                    // Caso: si viene en formato ISO con T00:00:00.000Z
+                    else if (timeString.includes("T")) {
+                        const parsed = new Date(timeString);
+                        hours = parsed.getHours().toString().padStart(2, "0");
+                        minutes = parsed.getMinutes().toString().padStart(2, "0");
+                    }
+
+                    if (hours && minutes) {
+                        return `${dateText} a las ${hours}:${minutes}`;
+                    }
                 }
+
 
                 return dateText;
             }
