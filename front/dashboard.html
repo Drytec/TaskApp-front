@@ -221,17 +221,13 @@
             card.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('taskId', task._id);
             });
-            const formatDate = (dateStr) => {
-            if (!dateStr) return "";
-            return dateStr.split("T")[0]; 
-        };
 
             // ... tu innerHTML se queda igual ...
             card.innerHTML = `
                 <h3 class="task-title">${task.taskName}</h3>
                 ${task.taskDescription ? `<p class="task-description">${task.taskDescription}</p>` : ''}
                 <div class="task-meta">
-                    ${task.dueDate ? `<span class="task-time">📅 Vence: ${formatDate(task.dueDate)}</span>` : ''}
+                    ${task.dueDate ? `<span class="task-time">📅 Vence: ${formatDueDate(task.dueDate, task.dueTime)}</span>` : ''}
                     <span class="task-priority ${task.isImportant ? 'alta' : 'media'}">
                     ${task.isImportant ? 'Alta' : 'Media'}
                     </span>
