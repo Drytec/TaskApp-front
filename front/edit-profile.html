@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Perfil</title>
+  <link rel="stylesheet" href="/src/css/profile.css">
+  <style>
+    .edit-container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .edit-container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-save { background: #4caf50; color: #fff; }
+    .btn-cancel { background: #f44336; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="edit-container">
+    <h2>Editar Perfil</h2>
+    <form id="editProfileForm">
+      <div class="form-group">
+        <label for="editFirstName">Nombres</label>
+        <input type="text" id="editFirstName" required />
+      </div>
+      <div class="form-group">
+        <label for="editLastName">Apellidos</label>
+        <input type="text" id="editLastName" required />
+      </div>
+      <div class="form-group">
+        <label for="editAge">Edad</label>
+        <input type="number" id="editAge" min="1" />
+      </div>
+      <div class="form-group">
+        <label for="editEmail">Correo</label>
+        <input type="email" id="editEmail" required />
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="cancelEdit()">Cancelar</button>
+        <button type="submit" class="btn-save">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = getToken();
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      // cargar datos actuales
+      const res = await fetch(`${API_URL}/users/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if(res.ok){
+        const user = await res.json();
+        document.getElementById('editFirstName').value = user.name || '';
+        document.getElementById('editLastName').value = user.lastname || '';
+        document.getElementById('editAge').value = user.age || '';
+        document.getElementById('editEmail').value = user.email || '';
+      }
+    });
+
+    document.getElementById('editProfileForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const token = getToken();
+      const updatedUser = {
+        name: document.getElementById('editFirstName').value.trim(),
+        lastname: document.getElementById('editLastName').value.trim(),
+        age: parseInt(document.getElementById('editAge').value),
+        email: document.getElementById('editEmail').value.trim(),
+      };
+
+      const res = await fetch(`${API_URL}/users/me`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedUser)
+      });
+
+      if(res.ok){
+        alert("Perfil actualizado correctamente ✅");
+        window.location.href = "/profile";
+      } else {
+        const err = await res.json();
+        alert("Error: " + (err.error || "No se pudo actualizar"));
+      }
+    });
+
+    function cancelEdit(){
+      window.location.href = "/profile";
+    }
+  </script>
+</body>
+</html>
