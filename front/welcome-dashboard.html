@@ -112,7 +112,12 @@
             </div>
         </div>
     </main>
-
+    <div class="modal-overlay" id="feedbackModal">
+    <div class="modal-box" id="modalContent">
+        <p id="modalMessage"></p>
+        <div class="modal-actions" id="modalButtons"></div>
+    </div>
+    </div>
     <!-- Scripts -->
     <script src="/js/auth.js"></script>
     <script src="/js/tasks.js"></script>
@@ -196,11 +201,7 @@
         }
 
         // Función de cerrar sesión
-        function handleLogout() {
-            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-                logout(); // Función de auth.js
-            }
-        }
+
 
         // Función para ir al perfil
         function goToProfile() {
@@ -263,5 +264,41 @@
             }
         });
     </script>
+    <script>
+        function showModal(message, type="success", withCancel=false, onConfirm=null) {
+        const modal=document.getElementById("feedbackModal");
+        const msg=document.getElementById("modalMessage");
+        const buttons=document.getElementById("modalButtons");
+
+        msg.textContent=message;
+        document.getElementById("modalContent").className=`modal-box ${type}`;
+
+        // Botones
+        buttons.innerHTML="";
+        const ok=document.createElement("button");
+        ok.textContent="OK"; ok.className="ok-btn";
+        ok.onclick=()=>{ closeModal(); if(onConfirm) onConfirm(); };
+        buttons.appendChild(ok);
+
+        if(withCancel){
+            const cancel=document.createElement("button");
+            cancel.textContent="Cancelar"; cancel.className="cancel-btn";
+            cancel.onclick=()=>{ closeModal(); };
+            buttons.appendChild(cancel);
+        }
+
+        modal.style.display="flex";
+        }
+        function closeModal(){ 
+        document.getElementById("feedbackModal").style.display="none"; 
+        }
+
+        // Usar para logout:
+        function handleLogout() {
+        showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
+            logout(); // función ya definida en auth.js
+        });
+        }
+        </script>
 </body>
 </html>
