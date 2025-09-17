@@ -52,6 +52,11 @@
             <div class="profile-header">
                 <div class="profile-avatar" id="profileAvatar">U</div>
                 <h2 class="profile-title">Información Personal</h2>
+                <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">U</div>
+                <h2 class="profile-title">Información Personal</h2>
+                <button class="edit-btn" onclick="goToEditProfile()">✏️ Editar</button>
+            </div>
             </div>
             
             <div class="profile-info">
@@ -197,5 +202,11 @@
             alert('Función de configuración - próximamente');
         }
     </script>
+    <script>
+  function goToEditProfile() {
+    window.location.href = '/edit-profile';
+  }
+</script>
+
 </body>
 </html>
