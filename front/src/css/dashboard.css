@@ -85,7 +85,7 @@ body {
 }
 
 .new-task-btn {
-    background: #10b981;
+    background: #6366f1;
     color: white;
     border: none;
     padding: 10px 16px;
@@ -97,7 +97,7 @@ body {
 }
 
 .new-task-btn:hover {
-    background: #059669;
+    background: #c7c7ff;
     transform: translateY(-1px);
 }
 
@@ -236,25 +236,7 @@ body {
     gap: 8px;
 }
 
-.view-btn {
-    padding: 8px 16px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
 
-.view-btn.active {
-    background: #6366f1;
-    color: white;
-    border-color: #6366f1;
-}
-
-.view-btn:hover:not(.active) {
-    background: #f1f5f9;
-}
 
 /* Kanban Board */
 .kanban-board {
@@ -302,6 +284,12 @@ body {
     gap: 8px;
     font-size: 16px;
 }
+
+.column.drag-over {
+  background-color: rgba(0, 128, 255, 0.1);
+  border: 2px dashed #0080ff;
+}
+
 
 .task-count {
     background: rgba(0, 0, 0, 0.1);
@@ -504,8 +492,8 @@ body {
   margin-bottom: 16px;
 }
 .modal-box.success p { color: #065f46; }
-.modal-box.error p { color: #991b1b; }
-.modal-box button {
+.modal-box.error p { color: #000000; }
+.modal-box.success button {
   background: #6366f1;
   color: #fff;
   border: none;
@@ -514,14 +502,34 @@ body {
   font-size: 14px;
   cursor: pointer;
 }
-.modal-box button:hover { background: #5856eb; }
+
+.modal-box.error button {
+  background: #c20000;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.modal-box.success button:hover { background: #5856eb; }
 @keyframes slideDown {
   from { transform: translateY(-20px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
 }
+
+.modal-box.error button:hover { background: #940000; }
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+
 .modal-actions {
   display: flex;
   gap: 12px;            
   justify-content: center;
   margin-top: 12px;   
 }
+

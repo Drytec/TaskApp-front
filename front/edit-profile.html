@@ -4,50 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Editar Perfil</title>
-  <link rel="stylesheet" href="/src/css/profile.css">
-  <style>
-    .edit-container {
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .edit-container h2 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-    }
-    .form-actions {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    button {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .btn-save { background: #4caf50; color: #fff; }
-    .btn-cancel { background: #f44336; color: #fff; }
-  </style>
+  <link rel="stylesheet" href="/src/css/edit-profile.css">
 </head>
 <body>
   <div class="edit-container">
@@ -67,7 +24,7 @@
       </div>
       <div class="form-group">
         <label for="editEmail">Correo</label>
-        <input type="email" id="editEmail" required />
+        <input type="email" id="editEmail" required readonly />
       </div>
 
       <div class="form-actions">
@@ -77,59 +34,103 @@
     </form>
   </div>
 
+
+<div id="feedbackModal" class="modal-overlay">
+  <div id="modalContent" class="modal-box">
+    <p id="modalMessage"></p>
+    <div id="modalButtons" class="modal-actions"></div>
+  </div>
+</div>
+
+
   <script src="../js/auth.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const token = getToken();
-      if (!token) {
-        window.location.href = '/login';
-        return;
-      }
+<script>
+  let originalUser = {}; // 👈 aquí guardamos los datos originales
 
-      // cargar datos actuales
-      const res = await fetch(`${API_URL}/users/me`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if(res.ok){
-        const user = await res.json();
-        document.getElementById('editFirstName').value = user.name || '';
-        document.getElementById('editLastName').value = user.lastname || '';
-        document.getElementById('editAge').value = user.age || '';
-        document.getElementById('editEmail').value = user.email || '';
-      }
+  document.addEventListener('DOMContentLoaded', async () => {
+    const token = getToken();
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
+
+    // cargar datos actuales
+    const res = await fetch(`${API_URL}/users/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
-
-    document.getElementById('editProfileForm').addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const token = getToken();
-      const updatedUser = {
-        name: document.getElementById('editFirstName').value.trim(),
-        lastname: document.getElementById('editLastName').value.trim(),
-        age: parseInt(document.getElementById('editAge').value),
-        email: document.getElementById('editEmail').value.trim(),
+    if(res.ok){
+      const user = await res.json();
+      originalUser = { // 👈 guardamos copia de lo que vino
+        name: user.name || '',
+        lastname: user.lastname || '',
+        age: user.age || '',
+        email: user.email || ''
       };
 
-      const res = await fetch(`${API_URL}/users/me`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedUser)
-      });
-
-      if(res.ok){
-        alert("Perfil actualizado correctamente ✅");
-        window.location.href = "/profile";
-      } else {
-        const err = await res.json();
-        alert("Error: " + (err.error || "No se pudo actualizar"));
-      }
-    });
-
-    function cancelEdit(){
-      window.location.href = "/profile";
+      document.getElementById('editFirstName').value = originalUser.name;
+      document.getElementById('editLastName').value = originalUser.lastname;
+      document.getElementById('editAge').value = originalUser.age;
+      document.getElementById('editEmail').value = originalUser.email;
     }
-  </script>
+  });
+
+  document.getElementById('editProfileForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+
+    const updatedUser = {
+      name: document.getElementById('editFirstName').value.trim(),
+      lastname: document.getElementById('editLastName').value.trim(),
+      age: document.getElementById('editAge').value.trim()
+    };
+
+    // 👇 Validar si no cambió nada
+    if (
+      updatedUser.name === originalUser.name &&
+      updatedUser.lastname === originalUser.lastname &&
+      updatedUser.age === String(originalUser.age)
+    ) {
+      showModal("⚠️ No has editado ningún dato.", "warning");
+      return;
+    }
+
+    try {
+      await updateUser(updatedUser); // 👈 usa función de auth.js
+      showModal("✅ Perfil actualizado correctamente", "success", false, () => {
+        window.location.href = "/profile";
+      });
+    } catch (err) {
+      showModal("❌ Error al actualizar: " + (err.message || "desconocido"), "error");
+    }
+  });
+
+  function cancelEdit(){
+    window.location.href = "/profile";
+  }
+
+  function showModal(message, type="success", withCancel=false, onConfirm=null) {
+    const modal=document.getElementById("feedbackModal");
+    const msg=document.getElementById("modalMessage");
+    const buttons=document.getElementById("modalButtons");
+
+    msg.textContent=message;
+    document.getElementById("modalContent").className=`modal-box ${type}`;
+
+    buttons.innerHTML="";
+    const ok=document.createElement("button");
+    ok.textContent="OK"; ok.className="ok-btn";
+    ok.onclick=()=>{ closeModal(); if(onConfirm) onConfirm(); };
+    buttons.appendChild(ok);
+
+    if(withCancel){
+      const cancel=document.createElement("button");
+      cancel.textContent="Cancelar"; cancel.className="cancel-btn";
+      cancel.onclick=()=>{ closeModal(); };
+      buttons.appendChild(cancel);
+    }
+
+    modal.style.display="flex";
+  }
+  function closeModal(){ document.getElementById("feedbackModal").style.display="none"; }
+</script>
 </body>
 </html>

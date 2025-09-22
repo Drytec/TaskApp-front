@@ -23,7 +23,6 @@
         </div>
         
         <div class="header-right">
-            <button class="new-task-btn" onclick="goToNewTask()">Nueva tarea</button>
             <div class="user-menu" onclick="toggleDropdown()">
                 <div class="user-avatar" id="userAvatar">U</div>
                 <span class="user-name" id="userName">Usuario</span>
@@ -58,7 +57,7 @@
                 <h1>Mis Tareas</h1>
             </div>
             <div class="view-controls">
-                <button class="view-btn active">📊 Kanban</button>
+                <button class="new-task-btn" onclick="goToNewTask()">Nueva tarea</button>
             </div>
         </div>
 
@@ -355,15 +354,15 @@
 
         // Eliminar tarea
         async function deleteTaskById(taskId) {
-            if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
-                const result = await deleteTask(taskId);
-                
-                if (result.success) {
-                    await loadAllTasks(); // Recargar tareas
-                } else {
-                    alert('Error al eliminar la tarea: ' + result.error);
-                }
+        showModal("¿Estás seguro de que quieres eliminar esta tarea?", "error", true, async () => {
+            const result = await deleteTask(taskId);
+
+            if (result.success) {
+            await loadAllTasks(); // Recargar tareas
+            } else {
+            showModal("❌ Error al eliminar la tarea: " + result.error, "error");
             }
+        });
         }
 
         // Editar tarea
@@ -589,27 +588,55 @@
             columns.forEach(col => {
                 const element = document.getElementById(col.id);
 
+                // Permitir drop en cualquier parte de la columna
                 element.addEventListener('dragover', (e) => {
-                    e.preventDefault(); // necesario para permitir drop
+                    e.preventDefault();
+                    element.classList.add("drag-over"); // opcional: resalta columna
+                });
+
+                element.addEventListener('dragleave', () => {
+                    element.classList.remove("drag-over");
                 });
 
                 element.addEventListener('drop', async (e) => {
                     e.preventDefault();
+                    element.classList.remove("drag-over");
+
                     const taskId = e.dataTransfer.getData('taskId');
                     if (!taskId) return;
 
-                    // Actualizar status en DB
-                    const result = await updateTask(taskId, { status: col.newStatus, 
-                                                            isComplete: col.newStatus === "Hecho" });
-
-                    if (result.success) {
-                        await loadAllTasks(); // recargar tareas
-                    } else {
-                        alert('❌ Error al mover tarea: ' + result.error);
+                    // Mover la tarjeta en el DOM al lugar donde se soltó
+                    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+                    if (taskElement) {
+                        element.appendChild(taskElement); // 👈 ahora se pega directo en la columna
                     }
-        
+
+                    // Actualizar status en DB
+                    const result = await updateTask(taskId, { 
+                        status: col.newStatus, 
+                        isComplete: col.newStatus === "Hecho" 
+                    });
+
+                    if (!result.success) {
+                        showModal("❌ Error al mover tarea: " + result.error, "error");
+                        // rollback si falla (volver a cargar tareas)
+                        await loadAllTasks();
+                    } else {
+                        // actualizar contadores sin recargar todo
+                        updateCounters();
+                    }
                 });
             });
+        }
+
+        // Función para actualizar contadores sin recargar todo
+        function updateCounters() {
+            document.getElementById('todoCount').textContent =
+                document.querySelectorAll('#todoColumn .task-card').length;
+            document.getElementById('inProgressCount').textContent =
+                document.querySelectorAll('#inProgressColumn .task-card').length;
+            document.getElementById('completedCount').textContent =
+                document.querySelectorAll('#completedColumn .task-card').length;
         }
         </script>
         <script>

@@ -193,6 +193,7 @@ body {
 .profile-header {
     display: flex;
     align-items: center;
+    justify-content: space-between; 
     gap: 16px;
     margin-bottom: 32px;
     padding-bottom: 16px;
@@ -212,10 +213,12 @@ body {
     font-weight: 600;
 }
 
+
 .profile-title {
     font-size: 24px;
     font-weight: 600;
     color: #1e293b;
+    margin: 0; 
 }
 
 /* Profile Info */
@@ -289,4 +292,22 @@ body {
         text-align: center;
         gap: 12px;
     }
+}
+
+.edit-btn {
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 0; 
+    width: auto;   
+}
+
+.edit-btn:hover {
+    background: #4f46e5;
 }
