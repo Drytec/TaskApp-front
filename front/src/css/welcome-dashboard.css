@@ -499,7 +499,6 @@ a {
         font-size: 14px;
     }
 }
-
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -524,8 +523,8 @@ a {
   margin-bottom: 16px;
 }
 .modal-box.success p { color: #065f46; }
-.modal-box.error p { color: #991b1b; }
-.modal-box button {
+.modal-box.error p { color: #000000; }
+.modal-box.success button {
   background: #6366f1;
   color: #fff;
   border: none;
@@ -534,14 +533,34 @@ a {
   font-size: 14px;
   cursor: pointer;
 }
-.modal-box button:hover { background: #5856eb; }
+
+.modal-box.error button {
+  background: #c20000;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.modal-box.success button:hover { background: #5856eb; }
 @keyframes slideDown {
   from { transform: translateY(-20px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
 }
+
+.modal-box.error button:hover { background: #940000; }
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+
 .modal-actions {
   display: flex;
   gap: 12px;            
   justify-content: center;
   margin-top: 12px;   
 }
+
