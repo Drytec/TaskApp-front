@@ -48,31 +48,47 @@
   let originalUser = {}; // 👈 aquí guardamos los datos originales
 
   document.addEventListener('DOMContentLoaded', async () => {
-    const token = getToken();
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
+  const token = getToken();
+  if (!token) {
+    window.location.href = '/login';
+    return;
+  }
 
-    // cargar datos actuales
-    const res = await fetch(`${API_URL}/users/me`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if(res.ok){
-      const user = await res.json();
-      originalUser = { // 👈 guardamos copia de lo que vino
-        name: user.name || '',
-        lastname: user.lastname || '',
-        age: user.age || '',
-        email: user.email || ''
-      };
-
-      document.getElementById('editFirstName').value = originalUser.name;
-      document.getElementById('editLastName').value = originalUser.lastname;
-      document.getElementById('editAge').value = originalUser.age;
-      document.getElementById('editEmail').value = originalUser.email;
-    }
+  // cargar datos actuales
+  const res = await fetch(`${API_URL}/users/me`, {
+    headers: { 'Authorization': `Bearer ${token}` }
   });
+  if(res.ok){
+    const user = await res.json();
+    originalUser = { 
+      name: user.name || '',
+      lastname: user.lastname || '',
+      age: user.age || '',
+      email: user.email || ''
+    };
+
+    const firstNameInput = document.getElementById('editFirstName');
+    const lastNameInput = document.getElementById('editLastName');
+    const ageInput = document.getElementById('editAge');
+    const emailInput = document.getElementById('editEmail');
+
+    firstNameInput.value = originalUser.name;
+    lastNameInput.value = originalUser.lastname;
+    ageInput.value = originalUser.age;
+    emailInput.value = originalUser.email;
+
+    // 👇 mover el cursor al final en los inputs editables
+[firstNameInput, lastNameInput, ageInput].forEach(input => {
+  input.addEventListener("focus", () => {
+    const length = input.value.length;
+    // pequeño delay para que no lo sobrescriba el navegador
+    setTimeout(() => {
+      input.setSelectionRange(length, length);
+    }, 0);
+  });
+});
+  }
+});
 
   document.getElementById('editProfileForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
