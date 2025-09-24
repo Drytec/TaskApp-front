@@ -1,7 +1,11 @@
+import { showModal } from "./auth.js";  
+
+
 const API_URL =
   window.location.hostname.includes("localhost")
     ? "/api"  
     : "https://taskapp-aaph.onrender.com/api";
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -38,7 +42,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🔹 Confirmación de password
   confirmPasswordInput.addEventListener("input", () => {
-    if (confirmPasswordInput.value === newPasswordInput.value && confirmPasswordInput.value.length > 0) {
+    if (
+      confirmPasswordInput.value === newPasswordInput.value &&
+      confirmPasswordInput.value.length > 0
+    ) {
       confirmPasswordInput.classList.remove("error");
       confirmPasswordInput.classList.add("valid");
       errorBox.innerText = "";
@@ -64,15 +71,22 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await res.json();
+
       if (res.ok) {
-        alert("Contraseña actualizada ✅. Ahora puedes iniciar sesión.");
-        window.location.href = "/login.html";
+        showModal(
+          "✅ Contraseña actualizada correctamente. Ahora puedes iniciar sesión.",
+          "success",
+          false,
+          () => {
+            window.location.href = "/login.html";
+          }
+        );
       } else {
-        errorBox.innerText = data.error || "No se pudo cambiar la contraseña";
+        showModal(data.error || "No se pudo cambiar la contraseña", "error");
       }
     } catch (err) {
-      errorBox.innerText = "Error de conexión";
       console.error(err);
+      showModal("❌ Error de conexión con el servidor", "error");
     }
   });
 });
