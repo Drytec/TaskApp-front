@@ -32,10 +32,7 @@
                         <span class="dropdown-icon-item">👤</span>
                         <span>Mi perfil</span>
                     </div>
-                    <div class="dropdown-item" onclick="goToSettings()">
-                        <span class="dropdown-icon-item">⚙️</span>
-                        <span>Configuración</span>
-                    </div>
+
                     <div class="dropdown-divider"></div>
                     <div class="dropdown-item logout" onclick="handleLogout()">
                         <span class="dropdown-icon-item">🚪</span>
@@ -223,9 +220,6 @@
         }
 
         // Función para ir a configuración
-        function goToSettings() {
-            alert('Función de configuración - próximamente');
-        }
 
         // Función para crear nueva tarea
         function createNewTask() {
@@ -277,16 +271,13 @@
                 addQuickTask();
             }
         });
-    </script>
-    <script>
 
-
-        // Usar para logout:
         function handleLogout() {
-        showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
-            logout(); // función ya definida en auth.js
-        });
+            showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
+                logout(); 
+            });
         }
-        </script>
+    </script>
+
 </body>
 </html>

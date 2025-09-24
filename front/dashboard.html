@@ -35,10 +35,7 @@
                         <span class="dropdown-icon-item">👤</span>
                         <span>Mi perfil</span>
                     </div>
-                    <div class="dropdown-item" onclick="goToSettings()">
-                        <span class="dropdown-icon-item">⚙️</span>
-                        <span>Configuración</span>
-                    </div>
+
                     <div class="dropdown-divider"></div>
                     <div class="dropdown-item logout" onclick="handleLogout()">
                         <span class="dropdown-icon-item">🚪</span>
@@ -131,34 +128,38 @@
 
         // Verificar autenticación al cargar
         document.addEventListener('DOMContentLoaded', async function() {
-            if (!isAuthenticated()) {
-                window.location.href = '/login';
-                return;
-            }
-
-            // Cargar información del usuario
-            loadUserInfo();
-            
-            // Cargar tareas
-            await loadAllTasks();
-        });
-
-        // Cargar información del usuario desde el token
-        function loadUserInfo() {
-            const token = getToken();
-            if (token) {
-                try {
-                    const payload = JSON.parse(atob(token.split('.')[1]));
-                    const userName = payload.email.split('@')[0];
-                    
-                    document.getElementById('userName').textContent = userName;
-                    document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
-                } catch (e) {
-                    console.error('Error decodificando token:', e);
-                }
-            }
+        if (!isAuthenticated()) {
+            window.location.href = '/login';
+            return;
         }
 
+        // Cargar información del usuario desde el backend
+        await loadUserInfo();
+        
+        // Cargar tareas
+        await loadAllTasks();
+    });
+
+    // Cargar información del usuario desde el endpoint /api/users/me
+    async function loadUserInfo() {
+        try {
+            const res = await fetch("/api/users/me", {
+                headers: { Authorization: `Bearer ${getToken()}` }
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+                document.getElementById('userName').textContent = user.name || 'Usuario';
+                if (user.name) {
+                    document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+                }
+            } else {
+                console.warn("No se pudieron cargar los datos del usuario.");
+            }
+        } catch (err) {
+            console.error("Error cargando usuario:", err);
+        }
+    }
         // Cargar todas las tareas
         async function loadAllTasks() {
             // Mostrar indicador de carga
@@ -574,9 +575,7 @@
         }
 
         // Función para ir a configuración
-        function goToSettings() {
-            alert('Función de configuración - próximamente');
-        }
+
 
         // Habilitar drag and drop en columnas
         function enableDragAndDrop() {
