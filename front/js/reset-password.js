@@ -1,5 +1,3 @@
-import { showModal } from "./auth.js";  
-
 
 const API_URL =
   window.location.hostname.includes("localhost")
