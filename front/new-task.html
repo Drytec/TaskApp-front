@@ -157,16 +157,19 @@
 }
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await fetch("/api/users/me", {
-      headers: { Authorization: `Bearer ${getToken()}` }
+    const token = getToken();
+    if (!token) return;
+
+    const res = await fetch(`${API_URL}/users/me`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     if (res.ok) {
       const user = await res.json();
       document.getElementById("userName").textContent = user.name || "Usuario";
-      if (user.name) {
-        document.getElementById("userAvatar").textContent = user.name.charAt(0).toUpperCase();
-      }
+      document.getElementById("userAvatar").textContent = user.name
+        ? user.name.charAt(0).toUpperCase()
+        : "U";
     } else {
       console.warn("No se pudieron cargar los datos del usuario.");
     }
@@ -174,6 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error cargando usuario:", err);
   }
 });
+
 
   </script>
 </body>
