@@ -184,7 +184,7 @@ async function deleteAccount() {
     }
 }
 
-export function showModal(message, type = "info", showCancel = false, onConfirm = null) {
+function showModal(message, type = "info", showCancel = false, onConfirm = null) {
     console.log("✅ showModal ejecutado con mensaje:", message);
     const modal = document.getElementById("feedbackModal");
     const modalBox = document.getElementById("modalContent");
