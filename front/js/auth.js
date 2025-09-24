@@ -224,3 +224,5 @@ function closeModal() {
     modal.style.display = "none";
   }
 }
+
+window.showModal = showModal;
