@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
 </head>
 <body>
-    <!-- Header -->
+
     <header class="header">
         <div class="header-left">
             <a href="/welcome-dashboard" class="logo-link">
@@ -26,8 +26,7 @@
                 <div class="user-avatar" id="userAvatar">U</div>
                 <span class="user-name" id="userName">Usuario</span>
                 <div class="dropdown-icon">▼</div>
-                
-                <!-- Dropdown Menu -->
+            
                 <div class="dropdown-menu" id="userDropdown">
                     <div class="dropdown-item" onclick="goToProfile()">
                         <span class="dropdown-icon-item">👤</span>
@@ -43,8 +42,6 @@
             </div>
         </div>
     </header>
-
-    <!-- Main Content -->
     <main class="main-content">
         <div class="profile-container">
             <div class="profile-header">
@@ -94,7 +91,6 @@
         <div class="modal-actions" id="modalButtons"></div>
     </div>
     </div>
-    <!-- Scripts -->
     <script src="../js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {

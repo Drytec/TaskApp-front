@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,26 +8,25 @@
     <link rel="stylesheet" href="/src/css/welcome-dashboard.css">
     <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
 </head>
+
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-left">
             <h1 class="logo">TicTask</h1>
         </div>
-        
+
         <div class="header-center">
             <div class="greeting">
                 <span id="greeting">Hola 👋</span>
             </div>
         </div>
-        
+
         <div class="header-right">
             <div class="user-menu" onclick="toggleDropdown()">
                 <div class="user-avatar" id="userAvatar">U</div>
                 <span class="user-name" id="userName">Usuario</span>
                 <div class="dropdown-icon">▼</div>
-                
-                <!-- Dropdown Menu -->
+
                 <div class="dropdown-menu" id="userDropdown">
                     <div class="dropdown-item" onclick="goToProfile()">
                         <span class="dropdown-icon-item">👤</span>
@@ -43,15 +43,12 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Welcome Section -->
         <div class="welcome-section">
             <h1 class="welcome-title" id="welcomeTitle">¡Bienvenido!</h1>
             <p class="welcome-subtitle">Aquí tienes un resumen de tus tareas de hoy</p>
         </div>
 
-        <!-- Stats Cards -->
         <div class="stats-container">
             <div class="stat-card por-hacer">
                 <div class="stat-icon">📋</div>
@@ -72,7 +69,6 @@
             </div>
         </div>
 
-        <!-- Action Cards -->
         <div class="action-cards">
             <div class="action-card">
                 <div class="action-icon ver-tareas">📊</div>
@@ -93,48 +89,42 @@
             </div>
         </div>
 
-        <!-- Quick Add Section -->
         <div class="quick-add-section">
             <div class="quick-add-header">
                 <span class="quick-add-icon">⚡</span>
                 <h3>Agregar tarea rápida</h3>
             </div>
             <div class="quick-add-form">
-                <input 
-                    type="text" 
-                    class="quick-input" 
-                    placeholder="¿Qué necesitas hacer hoy?"
-                    id="quickTaskInput"
-                >
+                <input type="text" class="quick-input" placeholder="¿Qué necesitas hacer hoy?" id="quickTaskInput">
                 <button class="quick-add-btn" onclick="addQuickTask()" id="quickAddBtn">Agregar</button>
             </div>
         </div>
     </main>
     <div class="modal-overlay" id="feedbackModal">
-    <div class="modal-box" id="modalContent">
-        <p id="modalMessage"></p>
-        <div class="modal-actions" id="modalButtons"></div>
+        <div class="modal-box" id="modalContent">
+            <p id="modalMessage"></p>
+            <div class="modal-actions" id="modalButtons"></div>
+        </div>
     </div>
-    </div>
-    <!-- Scripts -->
+
     <script src="/js/auth.js"></script>
     <script src="/js/tasks.js"></script>
     <script>
-        // Verificar autenticación al cargar
-        document.addEventListener('DOMContentLoaded', async function() {
+
+        document.addEventListener('DOMContentLoaded', async function () {
             if (!isAuthenticated()) {
                 window.location.href = '/login';
                 return;
             }
 
-            // Cargar información del usuario
+
             loadUserInfo();
-            
-            // Cargar estadísticas de tareas
+
+
             await loadTaskStats();
         });
 
-        // Cargar información del usuario desde el token
+
         async function loadUserInfo() {
             const token = getToken();
             if (!token) return;
@@ -151,7 +141,7 @@
                 if (response.ok) {
                     const user = await response.json();
 
-                    const firstName = user.name; // 👈 solo el nombre
+                    const firstName = user.name;
 
                     document.getElementById('greeting').textContent = `Hola, ${firstName} 👋`;
                     document.getElementById('userName').textContent = firstName;
@@ -165,44 +155,44 @@
             }
         }
 
-        // Cargar estadísticas de tareas
+
         async function loadTaskStats() {
             const result = await getAllTasks();
-            
+
             if (result.success) {
                 const tasks = result.data;
-                
-                // Contar tareas por estado
+
+
                 let todoCount = 0;
                 let inProgressCount = 0;
                 let completedCount = 0;
-                
+
                 tasks.forEach(task => {
                     if (task.isComplete) {
                         completedCount++;
                     } else if (task.isImportant) {
-                        // Usamos isImportant como indicador de "en progreso" por ahora
+
                         inProgressCount++;
                     } else {
                         todoCount++;
                     }
                 });
-                
-                // Actualizar contadores
+
+
                 document.getElementById('todoCount').textContent = todoCount;
                 document.getElementById('inProgressCount').textContent = inProgressCount;
                 document.getElementById('completedCount').textContent = completedCount;
             }
         }
 
-        // Toggle del dropdown menu
+
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('show');
         }
 
-        // Cerrar dropdown si se hace clic fuera
-        window.onclick = function(event) {
+
+        window.onclick = function (event) {
             if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
                 const dropdown = document.getElementById('userDropdown');
                 if (dropdown.classList.contains('show')) {
@@ -211,53 +201,53 @@
             }
         }
 
-        // Función de cerrar sesión
 
 
-        // Función para ir al perfil
+
+
         function goToProfile() {
             window.location.href = '/profile';
         }
 
-        // Función para ir a configuración
 
-        // Función para crear nueva tarea
+
+
         function createNewTask() {
-            window.location.href = '/new-task'; // Cambiado a /task según tu app.js
+            window.location.href = '/new-task';
         }
 
-        // Función para agregar tarea rápida
+
         async function addQuickTask() {
             const input = document.getElementById('quickTaskInput');
             const btn = document.getElementById('quickAddBtn');
             const taskText = input.value.trim();
-            
+
             if (taskText) {
-                // Deshabilitar el botón mientras se procesa
+
                 btn.disabled = true;
                 btn.textContent = 'Agregando...';
-                
-                // Crear la tarea
+
+
                 const result = await createTask({
                     taskName: taskText,
                     taskDescription: 'Tarea creada desde el dashboard',
                     isImportant: false
                 });
-                
+
                 if (result.success) {
-                    // Limpiar input
+
                     input.value = '';
-                    
-                    // Mostrar mensaje de éxito
+
+
                     alert(`✅ Tarea "${taskText}" agregada exitosamente`);
-                    
-                    // Recargar estadísticas
+
+
                     await loadTaskStats();
                 } else {
                     alert(`❌ Error: ${result.error}`);
                 }
-                
-                // Rehabilitar el botón
+
+
                 btn.disabled = false;
                 btn.textContent = 'Agregar';
             } else {
@@ -265,8 +255,8 @@
             }
         }
 
-        // Permitir agregar tarea con Enter
-        document.getElementById('quickTaskInput').addEventListener('keypress', function(e) {
+
+        document.getElementById('quickTaskInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 addQuickTask();
             }
@@ -274,10 +264,11 @@
 
         function handleLogout() {
             showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
-                logout(); 
+                logout();
             });
         }
     </script>
 
 </body>
+
 </html>

@@ -22,11 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // 🔹 Validación dinámica de password
+
   newPasswordInput.addEventListener("input", () => {
     const value = newPasswordInput.value;
 
-    // Regex como en backend: min 8 chars, mayus, minus, número
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
     if (passwordRegex.test(value)) {
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 🔹 Confirmación de password
+
   confirmPasswordInput.addEventListener("input", () => {
     if (
       confirmPasswordInput.value === newPasswordInput.value &&
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 🔹 Form submit
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -90,55 +90,55 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('newPassword'); 
-    const confirmPasswordInput = document.getElementById('confirmPassword');
-    const resetBtn = document.getElementById('submitBtn'); 
+document.addEventListener('DOMContentLoaded', function () {
+  const passwordInput = document.getElementById('newPassword');
+  const confirmPasswordInput = document.getElementById('confirmPassword');
+  const resetBtn = document.getElementById('submitBtn');
 
-    const requirements = {
-        length: document.getElementById('req-length'),
-        uppercase: document.getElementById('req-uppercase'),
-        lowercase: document.getElementById('req-lowercase'),
-        number: document.getElementById('req-number'),
-        special: document.getElementById('req-special'),
-    };
+  const requirements = {
+    length: document.getElementById('req-length'),
+    uppercase: document.getElementById('req-uppercase'),
+    lowercase: document.getElementById('req-lowercase'),
+    number: document.getElementById('req-number'),
+    special: document.getElementById('req-special'),
+  };
 
-function validatePassword(password) {
+  function validatePassword(password) {
     const checks = {
-        length: password.length >= 8,
-        uppercase: /[A-Z]/.test(password),
-        lowercase: /[a-z]/.test(password),
-        number: /[0-9]/.test(password),
-        special: /[!@#$%^&*(),.?":{}|<>]/.test(password) 
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
     };
 
     Object.keys(checks).forEach(key => {
-        if (checks[key]) {
-            requirements[key].classList.add('met');
-        } else {
-            requirements[key].classList.remove('met');
-        }
+      if (checks[key]) {
+        requirements[key].classList.add('met');
+      } else {
+        requirements[key].classList.remove('met');
+      }
     });
 
     return Object.values(checks).every(check => check);
-}
+  }
 
-    passwordInput.addEventListener('input', function() {
-        const isValid = validatePassword(this.value);
-        if (isValid && confirmPasswordInput.value === this.value) {
-            resetBtn.disabled = false;
-        } else {
-            resetBtn.disabled = true;
-        }
-    });
+  passwordInput.addEventListener('input', function () {
+    const isValid = validatePassword(this.value);
+    if (isValid && confirmPasswordInput.value === this.value) {
+      resetBtn.disabled = false;
+    } else {
+      resetBtn.disabled = true;
+    }
+  });
 
-    confirmPasswordInput.addEventListener('input', function() {
-        if (this.value !== passwordInput.value) {
-            resetBtn.disabled = true;
-        } else {
-            if (validatePassword(passwordInput.value)) {
-                resetBtn.disabled = false;
-            }
-        }
-    });
+  confirmPasswordInput.addEventListener('input', function () {
+    if (this.value !== passwordInput.value) {
+      resetBtn.disabled = true;
+    } else {
+      if (validatePassword(passwordInput.value)) {
+        resetBtn.disabled = false;
+      }
+    }
+  });
 });

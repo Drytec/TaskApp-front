@@ -1,6 +1,6 @@
-// tasks.js
 
-// Function to create a task
+
+
 
 function validateTask(taskData) {
     if (!taskData.taskName || taskData.taskName.trim() === "") {
@@ -15,7 +15,7 @@ function validateTask(taskData) {
     if (!["Por hacer", "Haciendo", "Hecho"].includes(taskData.status)) {
         return "⚠️ Estado inválido";
     }
-    return null; // ✅ sin errores
+    return null;
 }
 
 async function createTask(taskData) {
@@ -53,7 +53,7 @@ async function createTask(taskData) {
     }
 }
 
-// Function to get all tasks
+
 async function getAllTasks() {
     try {
         const token = getToken();
@@ -79,7 +79,7 @@ async function getAllTasks() {
     }
 }
 
-// Function to update a task
+
 async function updateTask(taskId, updateData) {
     try {
         const token = getToken();
@@ -108,7 +108,7 @@ async function updateTask(taskId, updateData) {
     }
 }
 
-// Function to delete a task
+
 async function deleteTask(taskId) {
     try {
         const token = getToken();
@@ -134,7 +134,7 @@ async function deleteTask(taskId) {
     }
 }
 
-// Function to get a specific task
+
 async function getTask(taskId) {
     try {
         const token = getToken();

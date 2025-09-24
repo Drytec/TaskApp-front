@@ -1,4 +1,3 @@
-/* Reset y configuración base */
 * {
     margin: 0;
     padding: 0;
@@ -15,7 +14,7 @@ body {
     padding: 20px;
 }
 
-/* Contenedor principal */
+
 .container {
     width: 100%;
     max-width: 450px;
@@ -27,13 +26,13 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     padding: 40px;
-    height: 800px; /* Altura fija para ambos */
+    height: 800px;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-/* Form container */
+
 .form-container {
     width: 100%;
 }
@@ -53,7 +52,7 @@ body {
     margin-bottom: 16px;
 }
 
-/* Botón volver al inicio */
+
 .back-to-home {
     display: block;
     text-align: center;
@@ -70,7 +69,7 @@ body {
     text-decoration: underline;
 }
 
-/* Form styling */
+
 .signup-form {
     width: 100%;
 }
@@ -80,7 +79,7 @@ body {
 .name-fields {
     display: flex;
     gap: 16px;
-     /* Reducido para compactar */
+
 }
 
 .input-group.half {
@@ -126,23 +125,23 @@ body {
     background: #ffffff;
 }
 
-/* Password requirements - Más compactado */
+
 .password-requirements {
-    margin-top: 6px; /* Reducido aún más */
-    padding: 6px; /* Reducido aún más */
+    margin-top: 6px;
+    padding: 6px;
     background: #f8fafc;
-    border-radius: 6px; /* Reducido */
+    border-radius: 6px;
     border: 1px solid #e2e8f0;
 }
 
 .requirement {
     display: flex;
     align-items: center;
-    font-size: 10px; /* Reducido más */
+    font-size: 10px;
     color: #64748b;
-    margin-bottom: 1px; /* Reducido al mínimo */
+    margin-bottom: 1px;
     transition: color 0.2s ease;
-    line-height: 1.2; /* Compactar altura de línea */
+    line-height: 1.2;
 }
 
 .requirement:last-child {
@@ -158,16 +157,16 @@ body {
 }
 
 .check-icon {
-    width: 12px; /* Reducido de 14px a 12px */
-    height: 12px; /* Reducido de 14px a 12px */
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: #e2e8f0;
     color: transparent;
-    font-size: 9px; /* Reducido de 10px a 9px */
+    font-size: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 6px; /* Reducido de 8px a 6px */
+    margin-right: 6px;
     transition: all 0.2s ease;
 }
 
@@ -181,7 +180,7 @@ body {
     color: transparent;
 }
 
-/* Error messages */
+
 .error-message {
     color: #ef4444;
     font-size: 12px;
@@ -195,7 +194,7 @@ body {
     opacity: 1;
 }
 
-/* Submit button */
+
 .submit-btn {
     width: 100%;
     background: #d1d5db;
@@ -209,8 +208,8 @@ body {
     transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
-    margin-bottom: 16px; /* Reducido aún más */
-    margin-top: 8px; /* Agregado para compactar */
+    margin-bottom: 16px;
+    margin-top: 8px;
 }
 
 .submit-btn:not(:disabled) {
@@ -229,7 +228,7 @@ body {
     transform: translateY(0);
 }
 
-/* Spinner */
+
 .spinner {
     width: 20px;
     height: 20px;
@@ -248,15 +247,20 @@ body {
 }
 
 @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
 .btn-text.loading {
     opacity: 0;
 }
 
-/* Login link */
+
 .login-link {
     text-align: center;
     color: #6b7280;
@@ -275,7 +279,7 @@ body {
     text-decoration: underline;
 }
 
-/* Toast notification */
+
 .toast {
     position: fixed;
     top: 20px;
@@ -309,32 +313,32 @@ body {
     font-weight: 500;
 }
 
-/* Responsive */
+
 @media (max-width: 580px) {
     .form-wrapper {
         padding: 24px;
-        /* Removido max-height */
+
     }
-    
+
     .name-fields {
         flex-direction: column;
         gap: 0;
     }
-    
+
     .input-group.half {
         margin-bottom: 16px;
     }
-    
+
     .form-title {
         font-size: 20px;
     }
-    
+
     .toast {
         left: 20px;
         right: 20px;
         transform: translateY(-100px);
     }
-    
+
     .toast.show {
         transform: translateY(0);
     }
@@ -344,26 +348,26 @@ body {
     body {
         padding: 10px;
     }
-    
+
     .form-wrapper {
         padding: 20px;
     }
-    
+
     .form-subtitle {
         margin-bottom: 16px;
     }
-    
+
     .input-group {
         margin-bottom: 14px;
     }
-    
+
     .password-requirements {
         margin-top: 6px;
         padding: 6px;
     }
 }
 
-/* Accessibility */
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -372,7 +376,7 @@ body {
     }
 }
 
-/* Focus visible */
+
 .submit-btn:focus-visible {
     outline: 2px solid #6366f1;
     outline-offset: 2px;
