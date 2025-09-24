@@ -90,36 +90,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('newPassword'); // 🔹 corregido
+    const passwordInput = document.getElementById('newPassword'); 
     const confirmPasswordInput = document.getElementById('confirmPassword');
-    const resetBtn = document.getElementById('submitBtn'); // 🔹 corregido
+    const resetBtn = document.getElementById('submitBtn'); 
 
     const requirements = {
         length: document.getElementById('req-length'),
         uppercase: document.getElementById('req-uppercase'),
-        lowercase: document.getElementById('req-lowercase'), // 🔹 añadido
+        lowercase: document.getElementById('req-lowercase'),
         number: document.getElementById('req-number'),
-        number: document.getElementById('req-special'),
+        special: document.getElementById('req-special'),
     };
 
-    function validatePassword(password) {
-        const checks = {
-            length: password.length >= 8,
-            uppercase: /[A-Z]/.test(password),
-            lowercase: /[a-z]/.test(password), // 🔹 añadido
-            number: /[0-9]/.test(password),
-        };
+function validatePassword(password) {
+    const checks = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password) 
+    };
 
-        Object.keys(checks).forEach(key => {
-            if (checks[key]) {
-                requirements[key].classList.add('met');
-            } else {
-                requirements[key].classList.remove('met');
-            }
-        });
+    Object.keys(checks).forEach(key => {
+        if (checks[key]) {
+            requirements[key].classList.add('met');
+        } else {
+            requirements[key].classList.remove('met');
+        }
+    });
 
-        return Object.values(checks).every(check => check);
-    }
+    return Object.values(checks).every(check => check);
+}
 
     passwordInput.addEventListener('input', function() {
         const isValid = validatePassword(this.value);
