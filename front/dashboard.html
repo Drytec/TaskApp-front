@@ -358,7 +358,7 @@
             const result = await deleteTask(taskId);
 
             if (result.success) {
-            await loadAllTasks(); // Recargar tareas
+            await loadAllTasks(); 
             } else {
             showModal("❌ Error al eliminar la tarea: " + result.error, "error");
             }
@@ -514,7 +514,7 @@
                 
                 if (result.success) {
                     closeEditModal();
-                    await loadAllTasks(); // Recargar tareas
+                    await loadAllTasks(); 
                 } else {
                     alert('Error al actualizar la tarea: ' + result.error);
                 }
@@ -591,41 +591,44 @@
                 // Permitir drop en cualquier parte de la columna
                 element.addEventListener('dragover', (e) => {
                     e.preventDefault();
-                    element.classList.add("drag-over"); // opcional: resalta columna
+                    element.classList.add("drag-over"); 
                 });
 
                 element.addEventListener('dragleave', () => {
                     element.classList.remove("drag-over");
                 });
 
-                element.addEventListener('drop', async (e) => {
-                    e.preventDefault();
-                    element.classList.remove("drag-over");
+            element.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                element.classList.remove("drag-over");
 
-                    const taskId = e.dataTransfer.getData('taskId');
-                    if (!taskId) return;
+                const taskId = e.dataTransfer.getData('taskId');
+                if (!taskId) return;
 
-                    // Mover la tarjeta en el DOM al lugar donde se soltó
-                    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-                    if (taskElement) {
-                        element.appendChild(taskElement); // 👈 ahora se pega directo en la columna
+                const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+                if (taskElement) {
+                    element.appendChild(taskElement);
+
+                    
+                    const statusSpan = taskElement.querySelector('.task-status');
+                    if (statusSpan) {
+                        statusSpan.textContent = col.newStatus;
                     }
+                }
 
-                    // Actualizar status en DB
-                    const result = await updateTask(taskId, { 
-                        status: col.newStatus, 
-                        isComplete: col.newStatus === "Hecho" 
-                    });
-
-                    if (!result.success) {
-                        showModal("❌ Error al mover tarea: " + result.error, "error");
-                        // rollback si falla (volver a cargar tareas)
-                        await loadAllTasks();
-                    } else {
-                        // actualizar contadores sin recargar todo
-                        updateCounters();
-                    }
+                const result = await updateTask(taskId, { 
+                    status: col.newStatus, 
+                    isComplete: col.newStatus === "Hecho" 
                 });
+
+                if (!result.success) {
+                    showModal("❌ Error al mover tarea: " + result.error, "error");
+                    await loadAllTasks();
+                } else {
+                    updateCounters();
+                }
+            });
+
             });
         }
 
@@ -640,33 +643,8 @@
         }
         </script>
         <script>
-        function showModal(message, type="success", withCancel=false, onConfirm=null) {
-        const modal=document.getElementById("feedbackModal");
-        const msg=document.getElementById("modalMessage");
-        const buttons=document.getElementById("modalButtons");
 
-        msg.textContent=message;
-        document.getElementById("modalContent").className=`modal-box ${type}`;
 
-        // Botones
-        buttons.innerHTML="";
-        const ok=document.createElement("button");
-        ok.textContent="OK"; ok.className="ok-btn";
-        ok.onclick=()=>{ closeModal(); if(onConfirm) onConfirm(); };
-        buttons.appendChild(ok);
-
-        if(withCancel){
-            const cancel=document.createElement("button");
-            cancel.textContent="Cancelar"; cancel.className="cancel-btn";
-            cancel.onclick=()=>{ closeModal(); };
-            buttons.appendChild(cancel);
-        }
-
-        modal.style.display="flex";
-        }
-        function closeModal(){ 
-        document.getElementById("feedbackModal").style.display="none"; 
-        }
 
         // Usar para logout:
         function handleLogout() {
