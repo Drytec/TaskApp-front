@@ -1,8 +1,9 @@
 
 const API_URL =
-    window.location.hostname.includes("localhost")
-        ? "/api"
-        : "https://task-app-back.vercel.app/api";
+  window.location.hostname.includes("localhost")
+    ? "/api"  
+    : "https://taskapp-aaph.onrender.com/api";
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('form');

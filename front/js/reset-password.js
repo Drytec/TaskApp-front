@@ -1,7 +1,8 @@
 
 const API_URL =
   window.location.hostname.includes("localhost")
-    ? "/api"
+
+    ? "/api"  
     : "https://taskapp-aaph.onrender.com/api";
 
 document.addEventListener("DOMContentLoaded", () => {
