@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TaskApp - Nueva tarea</title>
-  <link rel="stylesheet" href="/src/css/new-task.css"/>
+  <link rel="stylesheet" href="/src/css/new-task.css" />
   <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
 
 </head>
+
 <body>
-  <!-- Header simplificado como lo tenías -->
   <header class="header">
     <div class="header-left">
-      <a href="/welcome-dashboard" class="logo-link"><h1 class="logo">TicTask</h1></a>
+      <a href="/welcome-dashboard" class="logo-link">
+        <h1 class="logo">TicTask</h1>
+      </a>
     </div>
     <div class="header-right">
       <div class="user-menu" onclick="toggleDropdown()">
@@ -27,8 +30,6 @@
       </div>
     </div>
   </header>
-
-  <!-- Formulario con fecha, hora, estado y prioridad como lo tenías -->
   <main class="main-content">
     <div class="form-container">
       <div class="form-header">
@@ -44,7 +45,7 @@
           <h3 class="section-title">Información básica</h3>
           <div class="form-group">
             <label for="title">Título *</label>
-            <input id="title" maxlength="50" required class="form-input"/>
+            <input id="title" maxlength="50" required class="form-input" />
             <span class="char-counter">0/50</span>
           </div>
           <div class="form-group">
@@ -56,8 +57,8 @@
 
         <div class="form-section">
           <h3 class="section-title">Fecha y hora</h3>
-          <input type="date" id="dueDate" class="form-input"/>
-          <input type="time" id="dueTime" class="form-input"/>
+          <input type="date" id="dueDate" class="form-input" />
+          <input type="time" id="dueTime" class="form-input" />
         </div>
 
         <div class="form-section">
@@ -67,7 +68,7 @@
             <option value="Haciendo">Haciendo</option>
             <option value="Hecho">Hecho</option>
           </select>
-          <label><input type="checkbox" id="isImportant"/> ⭐ Importante</label>
+          <label><input type="checkbox" id="isImportant" /> ⭐ Importante</label>
         </div>
 
         <div class="form-actions">
@@ -78,7 +79,6 @@
     </div>
   </main>
 
-  <!-- Modal -->
   <div class="modal-overlay" id="feedbackModal">
     <div class="modal-box" id="modalContent">
       <p id="modalMessage"></p>
@@ -89,96 +89,97 @@
   <script src="/js/auth.js"></script>
   <script src="/js/tasks.js"></script>
   <script>
-    // Modal genérico: success/error/confirm
 
 
-    // === Formulario única vez ===
-    document.getElementById("newTaskForm").addEventListener("submit", async (e)=>{
+
+
+    document.getElementById("newTaskForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const submitBtn=document.getElementById('submitBtn');
-      const originalText=submitBtn.textContent;
+      const submitBtn = document.getElementById('submitBtn');
+      const originalText = submitBtn.textContent;
 
-      const taskData={
-        taskName:document.getElementById('title').value.trim(),
-        taskDescription:document.getElementById('description').value.trim(),
-        dueDate:document.getElementById('dueDate').value||null,
-        dueTime:document.getElementById('dueTime').value||null,
-        isImportant:document.getElementById('isImportant').checked,
-        status:document.getElementById('status').value
+      const taskData = {
+        taskName: document.getElementById('title').value.trim(),
+        taskDescription: document.getElementById('description').value.trim(),
+        dueDate: document.getElementById('dueDate').value || null,
+        dueTime: document.getElementById('dueTime').value || null,
+        isImportant: document.getElementById('isImportant').checked,
+        status: document.getElementById('status').value
       };
 
-      // Debug: mostrar los datos que se van a enviar
+
       console.log('Datos de la tarea a enviar:', taskData);
       console.log('DueDate original del input:', document.getElementById('dueDate').value);
       console.log('DueDate en taskData:', taskData.dueDate);
 
-      const error=validateTask(taskData);
-      if(error){ showModal(error,"error"); return; }
+      const error = validateTask(taskData);
+      if (error) { showModal(error, "error"); return; }
 
-      submitBtn.disabled=true; submitBtn.textContent="⏳ Guardando...";
-      const result=await createTask(taskData);
+      submitBtn.disabled = true; submitBtn.textContent = "⏳ Guardando...";
+      const result = await createTask(taskData);
 
-      if(result.success){
-        showModal(`✅ Tarea "${taskData.taskName}" creada exitosamente!`,"success",false,()=>{
-          window.location.href="/dashboard";
+      if (result.success) {
+        showModal(`✅ Tarea "${taskData.taskName}" creada exitosamente!`, "success", false, () => {
+          window.location.href = "/dashboard";
         });
-      }else{
-        showModal(`❌ ${result.error}`,"error");
-        submitBtn.disabled=false; submitBtn.textContent=originalText;
+      } else {
+        showModal(`❌ ${result.error}`, "error");
+        submitBtn.disabled = false; submitBtn.textContent = originalText;
       }
     });
 
-    // cancelar con modal
-    function cancelTask(){
-      showModal("¿Seguro que quieres cancelar? Se perderán los cambios.","error",true,()=>{
-        window.location.href="/dashboard";
+
+    function cancelTask() {
+      showModal("¿Seguro que quieres cancelar? Se perderán los cambios.", "error", true, () => {
+        window.location.href = "/dashboard";
       });
     }
     function goToProfile() {
       window.location.href = '/profile';
-        }   
+    }
     function handleLogout() {
-            showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
-                logout(); 
-            });
-        }
+      showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
+        logout();
+      });
+    }
     function toggleDropdown() {
-    const dropdown = document.getElementById('userDropdown');
-    dropdown.classList.toggle('show');
-}
+      const dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('show');
+    }
 
-    window.onclick = function(event) {
+    window.onclick = function (event) {
       if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
         const dropdown = document.getElementById('userDropdown');
         if (dropdown.classList.contains('show')) {
-            dropdown.classList.remove('show');
+          dropdown.classList.remove('show');
         }
+      }
     }
-}
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const token = getToken();
-    if (!token) return;
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const token = getToken();
+        if (!token) return;
 
-    const res = await fetch(`${API_URL}/users/me`, {
-      headers: { Authorization: `Bearer ${token}` }
+        const res = await fetch(`${API_URL}/users/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          document.getElementById("userName").textContent = user.name || "Usuario";
+          document.getElementById("userAvatar").textContent = user.name
+            ? user.name.charAt(0).toUpperCase()
+            : "U";
+        } else {
+          console.warn("No se pudieron cargar los datos del usuario.");
+        }
+      } catch (err) {
+        console.error("Error cargando usuario:", err);
+      }
     });
-
-    if (res.ok) {
-      const user = await res.json();
-      document.getElementById("userName").textContent = user.name || "Usuario";
-      document.getElementById("userAvatar").textContent = user.name
-        ? user.name.charAt(0).toUpperCase()
-        : "U";
-    } else {
-      console.warn("No se pudieron cargar los datos del usuario.");
-    }
-  } catch (err) {
-    console.error("Error cargando usuario:", err);
-  }
-});
 
 
   </script>
 </body>
+
 </html>
