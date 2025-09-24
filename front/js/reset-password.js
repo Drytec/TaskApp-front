@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
         uppercase: document.getElementById('req-uppercase'),
         lowercase: document.getElementById('req-lowercase'), // 🔹 añadido
         number: document.getElementById('req-number'),
+        number: document.getElementById('req-special'),
     };
 
     function validatePassword(password) {

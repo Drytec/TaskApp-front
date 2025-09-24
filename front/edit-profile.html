@@ -7,7 +7,39 @@
   <link rel="stylesheet" href="/src/css/edit-profile.css">
   <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
 </head>
-<body>
+<body>    
+    <header class="header">
+        <div class="header-left">
+            <a href="/edit-profile" class="logo-link">
+                <h1 class="logo">TicTask</h1>
+            </a>
+        </div>
+        
+        
+        <div class="header-right">
+            <button class="back-btn" onclick="goToProfile()">Volver al perfil</button>
+            <div class="user-menu" onclick="toggleDropdown()">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span class="user-name" id="userName">Usuario</span>
+                <div class="dropdown-icon">▼</div>
+                
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu" id="userDropdown">
+                    <div class="dropdown-item" onclick="goToProfile()">
+                        <span class="dropdown-icon-item">👤</span>
+                        <span>Mi perfil</span>
+                    </div>
+
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item logout" onclick="handleLogout()">
+                        <span class="dropdown-icon-item">🚪</span>
+                        <span>Cerrar sesión</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+  <main class="main-content">
   <div class="edit-container">
     <h2>Editar Perfil</h2>
     <form id="editProfileForm">
@@ -34,7 +66,7 @@
       </div>
     </form>
   </div>
-
+</main>
 
 <div id="feedbackModal" class="modal-overlay">
   <div id="modalContent" class="modal-box">
@@ -78,17 +110,21 @@
     ageInput.value = originalUser.age;
     emailInput.value = originalUser.email;
 
-    // 👇 mover el cursor al final en los inputs editables
-[firstNameInput, lastNameInput, ageInput].forEach(input => {
-  input.addEventListener("focus", () => {
-    const length = input.value.length;
-    // pequeño delay para que no lo sobrescriba el navegador
-    setTimeout(() => {
-      input.setSelectionRange(length, length);
-    }, 0);
-  });
-});
+document.getElementById('userName').textContent = user.name || 'Usuario';
+  if (user.name) {
+    document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
   }
+
+  // mover cursor al final
+  [firstNameInput, lastNameInput, ageInput].forEach(input => {
+    input.addEventListener("focus", () => {
+      const length = input.value.length;
+      setTimeout(() => {
+        input.setSelectionRange(length, length);
+      }, 0);
+    });
+  });
+}
 });
 
   document.getElementById('editProfileForm').addEventListener('submit', async (e)=>{
@@ -123,7 +159,19 @@
   function cancelEdit(){
     window.location.href = "/profile";
   }
+  function handleLogout() {
+        showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
+            logout(); 
+        });
+        }
 
+  function goToProfile() {
+            window.location.href = '/profile';
+        }
+  function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
   
 
 </script>
