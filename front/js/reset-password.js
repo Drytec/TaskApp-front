@@ -4,7 +4,7 @@ import { showModal } from "./auth.js";
 const API_URL =
   window.location.hostname.includes("localhost")
     ? "/api"
-    : "https://task-app-back.vercel.app/api";
+    : "https://taskapp-aaph.onrender.com/api";
 
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
