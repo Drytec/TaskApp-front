@@ -59,9 +59,11 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    .btn-save { background: #4caf50; color: #fff; }
-    .btn-cancel { background: #f44336; color: #fff; }
+    .btn-save { background: #10b981; color: #fff; }
+    .btn-cancel { background: #c20000; color: #fff; }
   
+    .btn-save:hover { background: #059669; color: #fff; }
+    .btn-cancel:hover { background: #940000; color: #fff; }
 
   .modal-overlay {
   position: fixed;

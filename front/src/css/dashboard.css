@@ -241,18 +241,23 @@ body {
 /* Kanban Board */
 .kanban-board {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(3, 400px); 
+    gap: 32px; 
+    justify-content: center;
     min-height: 70vh;
 }
 
+
 /* Kanban Column */
 .kanban-column {
+    margin-top: 50px;
     background: white;
     border-radius: 12px;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    width: 400px; 
 }
+
 
 .column-header {
     padding: 16px 20px;
@@ -411,8 +416,8 @@ body {
 /* Responsive */
 @media (max-width: 1200px) {
     .kanban-board {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        justify-content: center;
     }
     
     .kanban-column {

@@ -123,30 +123,8 @@
     window.location.href = "/profile";
   }
 
-  function showModal(message, type="success", withCancel=false, onConfirm=null) {
-    const modal=document.getElementById("feedbackModal");
-    const msg=document.getElementById("modalMessage");
-    const buttons=document.getElementById("modalButtons");
+  
 
-    msg.textContent=message;
-    document.getElementById("modalContent").className=`modal-box ${type}`;
-
-    buttons.innerHTML="";
-    const ok=document.createElement("button");
-    ok.textContent="OK"; ok.className="ok-btn";
-    ok.onclick=()=>{ closeModal(); if(onConfirm) onConfirm(); };
-    buttons.appendChild(ok);
-
-    if(withCancel){
-      const cancel=document.createElement("button");
-      cancel.textContent="Cancelar"; cancel.className="cancel-btn";
-      cancel.onclick=()=>{ closeModal(); };
-      buttons.appendChild(cancel);
-    }
-
-    modal.style.display="flex";
-  }
-  function closeModal(){ document.getElementById("feedbackModal").style.display="none"; }
 </script>
 </body>
 </html>
