@@ -90,23 +90,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('password');
+    const passwordInput = document.getElementById('newPassword'); // 🔹 corregido
     const confirmPasswordInput = document.getElementById('confirmPassword');
-    const resetBtn = document.getElementById('reset-btn');
+    const resetBtn = document.getElementById('submitBtn'); // 🔹 corregido
 
     const requirements = {
         length: document.getElementById('req-length'),
         uppercase: document.getElementById('req-uppercase'),
+        lowercase: document.getElementById('req-lowercase'), // 🔹 añadido
         number: document.getElementById('req-number'),
-        special: document.getElementById('req-special')
     };
 
     function validatePassword(password) {
         const checks = {
             length: password.length >= 8,
             uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password), // 🔹 añadido
             number: /[0-9]/.test(password),
-            special: /[!@#$%^&*]/.test(password)
         };
 
         Object.keys(checks).forEach(key => {
