@@ -17,7 +17,7 @@
         </div>
         
         <div class="header-center">
-            <h2 class="page-title">Mi Perfil</h2>
+            <h2 class="page-title"></h2>
         </div>
         
         <div class="header-right">
@@ -47,7 +47,10 @@
             <div class="profile-header">
                 <div class="profile-avatar" id="profileAvatar">U</div>
                 <h2 class="profile-title">Información Personal</h2>
-                <button class="edit-btn" onclick="goToEditProfile()">✏️ Editar</button>
+                <button class="edit-btn" onclick="goToEditProfile()">
+                    <span>✏️</span>
+                    Editar
+                </button>
             </div>
             
             <div class="profile-info">
@@ -78,6 +81,7 @@
 
                 <div class="delete-account-container">
                     <button class="delete-account-btn" onclick="handleDeleteAccount()">
+                        <span>🗑️</span>
                         Eliminar cuenta
                     </button>
                 </div>
