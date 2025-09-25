@@ -1,48 +1,24 @@
-/**
- * Base API URL depending on environment.
- * @type {string}
- */
 const API_URL =
   window.location.hostname.includes("localhost")
     ? "/api"
     : "https://taskapp-aaph.onrender.com/api";
 
-/**
- * Save the authentication token to localStorage.
- * @param {string} token - The JWT token to save.
- */
 function saveToken(token) {
   localStorage.setItem("authToken", token);
 }
 
-/**
- * Get the authentication token from localStorage.
- * @returns {string|null} The JWT token or null if not found.
- */
 function getToken() {
   return localStorage.getItem("authToken");
 }
 
-/**
- * Remove the authentication token from localStorage.
- */
 function removeToken() {
   localStorage.removeItem("authToken");
 }
 
-/**
- * Check if the user is authenticated.
- * @returns {boolean} True if token exists, otherwise false.
- */
 function isAuthenticated() {
   return !!getToken();
 }
 
-/**
- * Verify if the user is authenticated by checking the server.
- * @async
- * @returns {Promise<boolean>} True if authenticated, false otherwise.
- */
 async function checkAuth() {
   const token = getToken();
   if (!token) {
@@ -60,34 +36,23 @@ async function checkAuth() {
 
     if (response.ok) {
       const user = await response.json();
+
+
       const userId = user?.user?._id || user?._id;
       if (userId) {
         localStorage.setItem("userId", userId);
       }
+
       return true;
     }
 
     return false;
   } catch (error) {
-    console.error("Error verifying authentication:", error);
+    console.error("Error verificando autenticación:", error);
     return false;
   }
 }
 
-/**
- * @typedef {Object} AuthResponse
- * @property {boolean} success
- * @property {object} [data] - Optional data returned by the server.
- * @property {string} [error] - Optional error message if something goes wrong.
- */
-
-/**
- * Log in a user with email and password.
- * @async
- * @param {string} email - The user's email.
- * @param {string} password - The user's password.
- * @returns {Promise<AuthResponse>}
- */
 async function login(email, password) {
   try {
     const response = await fetch(`${API_URL}/users/login`, {
@@ -101,10 +66,12 @@ async function login(email, password) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Error logging in");
+      throw new Error(data.error || "Error al iniciar sesión");
     }
 
     saveToken(data.token);
+
+
     const userId = data?.user?._id || data?._id;
     if (userId) {
       localStorage.setItem("userId", userId);
@@ -116,12 +83,6 @@ async function login(email, password) {
   }
 }
 
-/**
- * Register a new user.
- * @async
- * @param {object} userData - User registration data.
- * @returns {Promise<AuthResponse>}
- */
 async function signup(userData) {
   try {
     const response = await fetch(`${API_URL}/users/register`, {
@@ -135,7 +96,7 @@ async function signup(userData) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Error registering user");
+      throw new Error(data.error || "Error al registrar usuario");
     }
 
     return { success: true, data };
@@ -144,29 +105,20 @@ async function signup(userData) {
   }
 }
 
-/**
- * Log out the user by clearing local storage and redirecting to login.
- */
 function logout() {
   removeToken();
   localStorage.removeItem("userId");
   window.location.href = "/login";
 }
 
-/**
- * Update the currently logged-in user's information.
- * @async
- * @param {object} updates - Fields to update (email cannot be modified).
- * @throws Will throw an error if there is no active session or the request fails.
- * @returns {Promise<object>} The updated user data.
- */
 async function updateUser(updates) {
   const token = getToken();
   const userId = localStorage.getItem("userId");
 
   if (!token || !userId) {
-    throw new Error("No active session");
+    throw new Error("No hay sesión activa");
   }
+
 
   if ("email" in updates) {
     delete updates.email;
@@ -184,10 +136,93 @@ async function updateUser(updates) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Error updating user");
+    throw new Error(data.error || "Error al actualizar usuario");
   }
 
   return data;
 }
 
+async function deleteAccount() {
+  const token = getToken();
+  if (!token) {
+    return { success: false, error: "No estás autenticado" };
+  }
 
+  try {
+    const meResponse = await fetch(`${API_URL}/users/me`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!meResponse.ok) {
+      throw new Error("No se pudo obtener el usuario actual");
+    }
+
+    const meData = await meResponse.json();
+    const userId = meData._id;
+
+    const deleteResponse = await fetch(`${API_URL}/users/${userId}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    const result = await deleteResponse.json();
+
+    if (!deleteResponse.ok) {
+      throw new Error(result.error || "Error al eliminar cuenta");
+    }
+
+    return { success: true, data: result };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+function showModal(message, type = "info", showCancel = false, onConfirm = null) {
+  console.log("✅ showModal ejecutado con mensaje:", message);
+  const modal = document.getElementById("feedbackModal");
+  const modalBox = document.getElementById("modalContent");
+  const modalMessage = document.getElementById("modalMessage");
+  const modalButtons = document.getElementById("modalButtons");
+
+
+  modalBox.className = `modal-box ${type}`;
+
+  modalMessage.textContent = message;
+  modalButtons.innerHTML = "";
+
+  const okButton = document.createElement("button");
+  okButton.textContent = "OK";
+  okButton.onclick = () => {
+    modal.style.display = "none";
+    if (onConfirm) onConfirm();
+  };
+
+  modalButtons.appendChild(okButton);
+
+  if (showCancel) {
+    const cancelButton = document.createElement("button");
+    cancelButton.textContent = "Cancelar";
+    cancelButton.onclick = () => {
+      modal.style.display = "none";
+    };
+    modalButtons.appendChild(cancelButton);
+  }
+
+  modal.style.display = "flex";
+}
+
+function closeModal() {
+  const modal = document.getElementById("feedbackModal");
+  if (modal) {
+    modal.style.display = "none";
+  }
+}
+
+window.showModal = showModal;

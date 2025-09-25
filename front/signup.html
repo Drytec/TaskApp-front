@@ -3,96 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskApp - Sign Up</title>
+    <title>TaskApp - Crear Cuenta</title>
     <link rel="stylesheet" href="/src/css/signup.css">
-    <!--
-        @file signup.html
-        @description Sign Up page for TaskApp (TicTask). Allows users to create a new account
-                     with first name, last name, age, email, password, and password confirmation.
-                     Validates password requirements (length, uppercase, number, special character)
-                     and enables/disables submit button based on form validation.
-    -->
+    <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
 </head>
 <body>
     <div class="container">
         <div class="form-wrapper">
             <div class="form-container">
-                <h2 class="form-title">Create Account</h2>
-                <p class="form-subtitle">Join and start organizing your tasks</p>
-                <a href="/index" class="back-to-home">← Back to Home</a>
+                <h2 class="form-title">Crear cuenta</h2>
+                <p class="form-subtitle">Únete y comienza a organizar tus tareas</p>
+                <a href="/index" class="back-to-home">← Volver al inicio</a>
                 
                 <form class="signup-form">
-                    <!-- First and last name fields -->
                     <div class="name-fields">
                         <div class="input-group half">
                             <label for="firstName" class="input-label">
-                                First Name <span class="required">*</span>
+                                Nombres <span class="required">*</span>
                             </label>
-                            <input type="text" id="firstName" name="firstName" class="input-field" required>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                name="firstName" 
+                                class="input-field" 
+                                required
+                            >
                             <div class="error-message" id="firstName-error"></div>
                         </div>
                         
                         <div class="input-group half">
                             <label for="lastName" class="input-label">
-                                Last Name <span class="required">*</span>
+                                Apellidos <span class="required">*</span>
                             </label>
-                            <input type="text" id="lastName" name="lastName" class="input-field" required>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                name="lastName" 
+                                class="input-field" 
+                                required
+                            >
                             <div class="error-message" id="lastName-error"></div>
                         </div>
                     </div>
                     
-                    <!-- Age -->
                     <div class="input-group">
                         <label for="age" class="input-label">
-                            Age <span class="required">*</span>
+                            Edad <span class="required">*</span>
                         </label>
-                        <input type="number" id="age" name="age" class="input-field" placeholder="25" min="13" required>
+                        <input 
+                            type="number" 
+                            id="age" 
+                            name="age" 
+                            class="input-field" 
+                            placeholder="25"
+                            min="13"
+                            required
+                        >
                         <div class="error-message" id="age-error"></div>
                     </div>
                     
-                    <!-- Email -->
                     <div class="input-group">
                         <label for="email" class="input-label">
-                            Email <span class="required">*</span>
+                            Correo electrónico <span class="required">*</span>
                         </label>
-                        <input type="email" id="email" name="email" class="input-field" required>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="input-field" 
+                            required
+                        >
                         <div class="error-message" id="email-error"></div>
                     </div>
                     
-                    <!-- Password -->
                     <div class="input-group">
                         <label for="password" class="input-label">
-                            Password <span class="required">*</span>
+                            Contraseña <span class="required">*</span>
                         </label>
-                        <input type="password" id="password" name="password" class="input-field" required>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="input-field" 
+                            required
+                        >
                         <div class="password-requirements">
-                            <div class="requirement" id="req-length"><span class="check-icon">✓</span> At least 8 characters</div>
-                            <div class="requirement" id="req-uppercase"><span class="check-icon">✓</span> One uppercase letter</div>
-                            <div class="requirement" id="req-number"><span class="check-icon">✓</span> One number</div>
-                            <div class="requirement" id="req-special"><span class="check-icon">✓</span> One special character</div>
+                            <div class="requirement" id="req-length">
+                                <span class="check-icon">✓</span>
+                                Al menos 8 caracteres
+                            </div>
+                            <div class="requirement" id="req-uppercase">
+                                <span class="check-icon">✓</span>
+                                Una letra mayúscula
+                            </div>
+                            <div class="requirement" id="req-number">
+                                <span class="check-icon">✓</span>
+                                Un número
+                            </div>
+                            <div class="requirement" id="req-special">
+                                <span class="check-icon">✓</span>
+                                Un carácter especial
+                            </div>
                         </div>
                         <div class="error-message" id="password-error"></div>
                     </div>
                     
-                    <!-- Confirm Password -->
                     <div class="input-group">
                         <label for="confirmPassword" class="input-label">
-                            Confirm Password <span class="required">*</span>
+                            Confirmar contraseña <span class="required">*</span>
                         </label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" class="input-field" required>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            class="input-field" 
+                            required
+                        >
                         <div class="error-message" id="confirmPassword-error"></div>
                     </div>
                     
-                    <!-- Submit button -->
                     <button type="submit" class="submit-btn" id="signup-btn" disabled>
-                        <span class="btn-text">Sign Up</span>
+                        <span class="btn-text">Registrarse</span>
                         <div class="spinner hidden" id="signup-spinner"></div>
                     </button>
                 </form>
                 
                 <div class="login-link">
-                    <span>Already have an account? </span>
-                    <a href="/login" class="link">Sign In</a>
+                    <span>¿Ya tienes cuenta? </span>
+                    <a href="/login" class="link">Inicia sesión</a>
                 </div>
             </div>
         </div>
@@ -103,12 +141,6 @@
             <span class="toast-message"></span>
         </div>
     </div>
-
-    <!--
-        @description External scripts:
-        - /js/auth.js: authentication logic
-        - /js/signup-form.js: handles form validation, password requirement checking, toast notifications, and signup submission
-    -->
     <script src="js/auth.js"></script>
     <script src="js/signup-form.js"></script>
 </body>

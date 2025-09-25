@@ -1,7 +1,4 @@
-/**
- * @file signup.js
- * @description Handles the signup form, including input validation, password requirements, and API request to create a new user account.
- */
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('.signup-form');
@@ -15,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnText = signupBtn.querySelector('.btn-text');
     const spinner = document.getElementById('signup-spinner');
 
-    /** Password requirements elements */
+    
     const requirements = {
         length: document.getElementById('req-length'),
         uppercase: document.getElementById('req-uppercase'),
@@ -23,39 +20,32 @@ document.addEventListener('DOMContentLoaded', function() {
         special: document.getElementById('req-special')
     };
 
-    /**
-     * Show a toast message
-     * @param {string} message - The message to display
-     * @param {string} [type='error'] - The type of message ('error' | 'success')
-     */
+    
     function showToast(message, type = 'error') {
         const toast = document.getElementById('toast');
         const toastMessage = toast.querySelector('.toast-message');
         
         toastMessage.textContent = message;
-        toast.classList.remove('show', 'error', 'success');
-        toast.classList.add('toast', type, 'show');
+        toast.classList.remove('show');
+        toast.classList.remove('error');
+        toast.classList.remove('success');
+        
+        toast.classList.add('toast');
+        toast.classList.add(type);
+        toast.classList.add('show');
         
         setTimeout(() => {
             toast.classList.remove('show');
         }, 3000);
     }
 
-    /**
-     * Validate email format
-     * @param {string} email - Email to validate
-     * @returns {boolean} True if valid, false otherwise
-     */
+    
     function validateEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 
-    /**
-     * Validate password according to requirements
-     * @param {string} password - Password to validate
-     * @returns {boolean} True if all requirements are met
-     */
+    
     function validatePassword(password) {
         const checks = {
             length: password.length >= 8,
@@ -64,73 +54,90 @@ document.addEventListener('DOMContentLoaded', function() {
             special: /[!@#$%^&*]/.test(password)
         };
         
+        // Actualizar visualmente cada requisito
         Object.keys(checks).forEach(key => {
-            if (checks[key]) requirements[key].classList.add('met');
-            else requirements[key].classList.remove('met');
+            if (checks[key]) {
+                requirements[key].classList.add('met');
+            } else {
+                requirements[key].classList.remove('met');
+            }
         });
 
+        // Devolver true solo si todos los requisitos se cumplen
         return Object.values(checks).every(check => check);
     }
 
-    /**
-     * Clear validation error from input
-     * @param {HTMLInputElement} input - Input element to clear
-     */
+    
     function clearError(input) {
         const errorElement = document.getElementById(`${input.id}-error`);
-        if (errorElement) errorElement.textContent = '';
+        if (errorElement) {
+            errorElement.textContent = '';
+        }
         input.classList.remove('error');
     }
 
-    /**
-     * Show validation error on input
-     * @param {HTMLInputElement} input - Input element to mark as error
-     * @param {string} message - Error message
-     */
+    
     function showError(input, message) {
         const errorElement = document.getElementById(`${input.id}-error`);
-        if (errorElement) errorElement.textContent = message;
+        if (errorElement) {
+            errorElement.textContent = message;
+        }
         input.classList.add('error');
     }
 
-    // Enable/disable signup button based on password validation
+    
     passwordInput.addEventListener('input', function() {
         const isValid = validatePassword(this.value);
-        signupBtn.disabled = !(isValid && confirmPasswordInput.value === this.value);
-    });
-
-    // Confirm password validation
-    confirmPasswordInput.addEventListener('input', function() {
-        if (this.value !== passwordInput.value) {
-            showError(this, 'Passwords do not match');
-            signupBtn.disabled = true;
+        
+        
+        if (isValid && confirmPasswordInput.value === this.value) {
+            signupBtn.disabled = false;
         } else {
-            clearError(this);
-            if (validatePassword(passwordInput.value)) signupBtn.disabled = false;
+            signupBtn.disabled = true;
         }
     });
 
-    // Validate email on blur
-    emailInput.addEventListener('blur', function() {
-        if (!validateEmail(this.value)) showError(this, 'Invalid email');
-        else clearError(this);
+    
+    confirmPasswordInput.addEventListener('input', function() {
+        if (this.value !== passwordInput.value) {
+            showError(this, 'Las contraseñas no coinciden');
+            signupBtn.disabled = true;
+        } else {
+            clearError(this);
+            if (validatePassword(passwordInput.value)) {
+                signupBtn.disabled = false;
+            }
+        }
     });
 
-    // Validate age on blur
+    
+    emailInput.addEventListener('blur', function() {
+        if (!validateEmail(this.value)) {
+            showError(this, 'Ingrese un email válido');
+        } else {
+            clearError(this);
+        }
+    });
+
     ageInput.addEventListener('blur', function() {
         const age = parseInt(this.value);
-        if (age < 13) showError(this, 'You must be at least 13 years old');
-        else if (age > 120) showError(this, 'Enter a valid age');
-        else clearError(this);
+        if (age < 13) {
+            showError(this, 'Debes tener al menos 13 años');
+        } else if (age > 120) {
+            showError(this, 'Ingrese una edad válida');
+        } else {
+            clearError(this);
+        }
     });
 
-    /**
-     * Handle form submission
-     */
+    
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        
         form.querySelectorAll('input').forEach(input => clearError(input));
 
+        
         const formData = {
             name: firstNameInput.value.trim(),
             lastname: lastNameInput.value.trim(),
@@ -139,28 +146,58 @@ document.addEventListener('DOMContentLoaded', function() {
             password: passwordInput.value
         };
 
+        
         let hasErrors = false;
 
-        if (!formData.name) { showError(firstNameInput, 'First name is required'); hasErrors = true; }
-        if (!formData.lastname) { showError(lastNameInput, 'Last name is required'); hasErrors = true; }
-        if (!formData.age || formData.age < 13) { showError(ageInput, 'Invalid age'); hasErrors = true; }
-        if (!validateEmail(formData.email)) { showError(emailInput, 'Invalid email'); hasErrors = true; }
-        if (!validatePassword(formData.password)) { showError(passwordInput, 'Password does not meet requirements'); hasErrors = true; }
-        if (confirmPasswordInput.value !== formData.password) { showError(confirmPasswordInput, 'Passwords do not match'); hasErrors = true; }
+        if (!formData.name) {
+            showError(firstNameInput, 'El nombre es requerido');
+            hasErrors = true;
+        }
+
+        if (!formData.lastname) {
+            showError(lastNameInput, 'Los apellidos son requeridos');
+            hasErrors = true;
+        }
+
+        if (!formData.age || formData.age < 13) {
+            showError(ageInput, 'Edad inválida');
+            hasErrors = true;
+        }
+
+        if (!validateEmail(formData.email)) {
+            showError(emailInput, 'Email inválido');
+            hasErrors = true;
+        }
+
+        if (!validatePassword(formData.password)) {
+            showError(passwordInput, 'La contraseña no cumple los requisitos');
+            hasErrors = true;
+        }
+
+        if (confirmPasswordInput.value !== formData.password) {
+            showError(confirmPasswordInput, 'Las contraseñas no coinciden');
+            hasErrors = true;
+        }
+
         if (hasErrors) return;
 
+        
         btnText.style.display = 'none';
         spinner.classList.remove('hidden');
         signupBtn.disabled = true;
 
+        
         const result = await signup(formData);
 
+        
         btnText.style.display = 'inline';
         spinner.classList.add('hidden');
 
         if (result.success) {
-            showToast('Account successfully created', 'success');
-            setTimeout(() => { window.location.href = '/login'; }, 2000);
+            showToast('Cuenta creada con éxito', 'success');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 2000);
         } else {
             showToast(result.error);
             signupBtn.disabled = false;
