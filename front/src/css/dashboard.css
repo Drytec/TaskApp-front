@@ -298,6 +298,18 @@ body {
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
+/* Estilos para el elemento column-content cuando está siendo arrastrado */
+#todoColumn.drag-over,
+#inProgressColumn.drag-over,
+#completedColumn.drag-over {
+    background-color: rgba(99, 102, 241, 0.1);
+    border: 2px dashed #6366f1;
+    border-radius: 8px;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
 /* Estilos para la tarea que se está arrastrando */
 .task-card.dragging {
     opacity: 0.5;
@@ -319,7 +331,10 @@ body {
 }
 
 /* Efecto de pulso para la columna de destino */
-.column-content.drag-over::before {
+.column-content.drag-over::before,
+#todoColumn.drag-over::before,
+#inProgressColumn.drag-over::before,
+#completedColumn.drag-over::before {
     content: "Suelta aquí";
     position: absolute;
     top: 50%;
