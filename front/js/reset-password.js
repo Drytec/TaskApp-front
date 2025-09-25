@@ -1,9 +1,4 @@
-/**
- * @file reset-password.js
- * @description Handles the password reset form, including dynamic password validation, confirmation, and API request to update the password.
- */
 
-/** Base API URL depending on environment (localhost or production) */
 const API_URL =
   window.location.hostname.includes("localhost")
 
@@ -21,19 +16,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const submitBtn = document.getElementById("submitBtn");
   const tokenError = document.getElementById("tokenError");
 
-  // If no token is provided, show error and hide form
   if (!token) {
     tokenError.style.display = "block";
     form.style.display = "none";
     return;
   }
 
-  /**
-   * Validate new password dynamically
-   * Password must contain at least 8 characters, including uppercase, lowercase, and a number
-   */
+
   newPasswordInput.addEventListener("input", () => {
     const value = newPasswordInput.value;
+
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
     if (passwordRegex.test(value)) {
@@ -45,10 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /**
-   * Validate password confirmation dynamically
-   * @description Adds "valid" class if passwords match, "error" otherwise
-   */
+
   confirmPasswordInput.addEventListener("input", () => {
     if (
       confirmPasswordInput.value === newPasswordInput.value &&
@@ -60,14 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       confirmPasswordInput.classList.remove("valid");
       confirmPasswordInput.classList.add("error");
-      errorBox.innerText = "Passwords do not match";
+      errorBox.innerText = "Las contraseñas no coinciden";
     }
   });
 
-  /**
-   * Handles the form submission to reset the password
-   * @param {Event} e - The form submit event
-   */
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -84,13 +71,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Password updated ✅. You can now login.");
-        window.location.href = "/login.html";
+        showModal(
+          "✅ Contraseña actualizada correctamente. Ahora puedes iniciar sesión.",
+          "success",
+          false,
+          () => {
+            window.location.href = "/login.html";
+          }
+        );
       } else {
-        errorBox.innerText = data.error || "Failed to reset password";
+        showModal(data.error || "No se pudo cambiar la contraseña", "error");
       }
     } catch (err) {
-      errorBox.innerText = "Connection error";
       console.error(err);
       showModal("❌ Error de conexión con el servidor", "error");
     }

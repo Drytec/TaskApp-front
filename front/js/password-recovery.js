@@ -1,9 +1,4 @@
-/**
- * @file password-recovery.js
- * @description Handles the password recovery form, including email validation, displaying messages, and sending requests to the backend API.
- */
 
-/** Base API URL depending on environment (localhost or production) */
 const API_URL =
   window.location.hostname.includes("localhost")
     ? "/api"  
@@ -15,12 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const emailInput = document.getElementById('email');
     const submitBtn = document.querySelector('.submit-btn');
 
-    /**
-     * Shows a message on the page (info, success, or error)
-     * @param {string} message - The message text to display.
-     * @param {('info'|'success'|'error')} [type='info'] - The type of message.
-     */
+
     function showMessage(message, type = 'info') {
+
         let messageBox = document.querySelector('.message-box');
         if (!messageBox) {
             messageBox = document.createElement('div');
@@ -34,92 +26,93 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="message-text">${message}</span>
         `;
         messageBox.style.display = 'block';
-        
+
+
         setTimeout(() => {
             messageBox.style.display = 'none';
         }, 5000);
     }
 
-    /**
-     * Validates an email string
-     * @param {string} email - The email to validate.
-     * @returns {boolean} True if the email is valid, false otherwise.
-     */
+
     function validateEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 
-    /**
-     * Handles form submission for password recovery
-     * @param {Event} e - The form submit event
-     */
-    form.addEventListener('submit', async function(e) {
+
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const email = emailInput.value.trim();
 
+
         if (!email) {
-            showMessage('Please enter your email address', 'error');
+            showMessage('Por favor ingresa tu correo electrónico', 'error');
             emailInput.focus();
             return;
         }
 
         if (!validateEmail(email)) {
-            showMessage('Please enter a valid email address', 'error');
+            showMessage('Por favor ingresa un correo electrónico válido', 'error');
             emailInput.focus();
             return;
         }
 
+
         const originalText = submitBtn.innerHTML;
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>⏳</span> Sending...';
+        submitBtn.innerHTML = '<span>⏳</span> Enviando...';
         submitBtn.style.opacity = '0.7';
 
         try {
+
             const response = await fetch(`${API_URL}/auth/forgot-password`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({ email })
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                showMessage(
-                    'If the email exists in our database, you will receive a recovery link shortly.',
-                    'success'
-                );
+
+                showMessage('Si el correo existe en nuestra base de datos, recibirás un enlace de recuperación en breve.', 'success');
+
+
                 emailInput.value = '';
+
 
                 setTimeout(() => {
                     window.location.href = '/login';
                 }, 3000);
             } else {
-                showMessage(data.error || 'Error processing the request', 'error');
+                showMessage(data.error || 'Error al procesar la solicitud', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
-            showMessage('Connection error. Please try again.', 'error');
+            showMessage('Error de conexión. Por favor intenta nuevamente.', 'error');
         } finally {
+
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
             submitBtn.style.opacity = '1';
         }
     });
 
-    /** Validate email on blur */
-    emailInput.addEventListener('blur', function() {
+
+    emailInput.addEventListener('blur', function () {
         if (this.value && !validateEmail(this.value)) {
             this.classList.add('error');
-            showMessage('Enter a valid email address', 'error');
+            showMessage('Ingresa un correo electrónico válido', 'error');
         } else {
             this.classList.remove('error');
         }
     });
 
-    /** Clear error class on input */
-    emailInput.addEventListener('input', function() {
+
+    emailInput.addEventListener('input', function () {
         this.classList.remove('error');
     });
 });

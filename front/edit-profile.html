@@ -4,38 +4,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Profile</title>
+  <title>Editar Perfil</title>
   <link rel="stylesheet" href="/src/css/edit-profile.css">
   <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
 </head>
 
 <body>
-  <div class="edit-container">
-    <h2>Edit Profile</h2>
-    <form id="editProfileForm">
-      <div class="form-group">
-        <label for="editFirstName">First Name</label>
-        <input type="text" id="editFirstName" required />
-      </div>
-      <div class="form-group">
-        <label for="editLastName">Last Name</label>
-        <input type="text" id="editLastName" required />
-      </div>
-      <div class="form-group">
-        <label for="editAge">Age</label>
-        <input type="number" id="editAge" min="1" />
-      </div>
-      <div class="form-group">
-        <label for="editEmail">Email</label>
-        <input type="email" id="editEmail" required readonly />
-      </div>
+  <header class="header">
+    <div class="header-left">
+      <a href="/welcome-dashboard" class="logo-link">
+        <h1 class="logo">TicTask</h1>
+      </a>
+    </div>
 
-      <div class="form-actions">
-        <button type="button" class="btn-cancel" onclick="cancelEdit()">Cancel</button>
-        <button type="submit" class="btn-save">Save Changes</button>
+    <div class="header-right">
+      <button class="back-btn" onclick="goToProfile()">Volver al perfil</button>
+      <div class="user-menu" onclick="toggleDropdown()">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span class="user-name" id="userName">Usuario</span>
+        <div class="dropdown-icon">▼</div>
+
+        <div class="dropdown-menu" id="userDropdown">
+          <div class="dropdown-item" onclick="goToProfile()">
+            <span class="dropdown-icon-item">👤</span>
+            <span>Mi perfil</span>
+          </div>
+
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item logout" onclick="handleLogout()">
+            <span class="dropdown-icon-item">🚪</span>
+            <span>Cerrar sesión</span>
+          </div>
+        </div>
       </div>
-    </form>
-  </div>
+    </div>
+  </header>
+  <main class="main-content">
+    <div class="edit-container">
+      <h2>Editar Perfil</h2>
+      <form id="editProfileForm">
+        <div class="form-group">
+          <label for="editFirstName">Nombres</label>
+          <input type="text" id="editFirstName" required />
+        </div>
+        <div class="form-group">
+          <label for="editLastName">Apellidos</label>
+          <input type="text" id="editLastName" required />
+        </div>
+        <div class="form-group">
+          <label for="editAge">Edad</label>
+          <input type="number" id="editAge" min="1" />
+        </div>
+        <div class="form-group">
+          <label for="editEmail">Correo</label>
+          <input type="email" id="editEmail" required readonly />
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="cancelEdit()">
+            <span>✕</span>
+            Cancelar
+          </button>
+          <button type="submit" class="btn-save">
+            <span>💾</span>
+            Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
 
   <div id="feedbackModal" class="modal-overlay">
     <div id="modalContent" class="modal-box">
@@ -44,15 +81,11 @@
     </div>
   </div>
 
+
   <script src="../js/auth.js"></script>
   <script>
-    /** @type {Object} Stores the original user data for comparison */
     let originalUser = {};
 
-    /**
-     * Load the current user's profile information when the page is ready.
-     * Fills input fields with the user's current data and positions the cursor at the end.
-     */
     document.addEventListener('DOMContentLoaded', async () => {
       const token = getToken();
       if (!token) {
@@ -60,14 +93,13 @@
         return;
       }
 
-      // Fetch current user data
+
       const res = await fetch(`${API_URL}/users/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-
-      if(res.ok){
+      if (res.ok) {
         const user = await res.json();
-        originalUser = { 
+        originalUser = {
           name: user.name || '',
           lastname: user.lastname || '',
           age: user.age || '',
@@ -84,23 +116,24 @@
         ageInput.value = originalUser.age;
         emailInput.value = originalUser.email;
 
-        // Move cursor to the end for editable inputs
+        document.getElementById('userName').textContent = user.name || 'Usuario';
+        if (user.name) {
+          document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+        }
+
+
         [firstNameInput, lastNameInput, ageInput].forEach(input => {
           input.addEventListener("focus", () => {
             const length = input.value.length;
-            setTimeout(() => { input.setSelectionRange(length, length); }, 0);
+            setTimeout(() => {
+              input.setSelectionRange(length, length);
+            }, 0);
           });
         });
       }
     });
 
-    /**
-     * Handle form submission for editing the user profile.
-     * Validates changes, prevents unnecessary updates, calls `updateUser` from auth.js,
-     * and shows success/error feedback in a modal.
-     * @param {Event} e - The submit event.
-     */
-    document.getElementById('editProfileForm').addEventListener('submit', async (e)=>{
+    document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const updatedUser = {
@@ -109,72 +142,54 @@
         age: document.getElementById('editAge').value.trim()
       };
 
-      // Check if nothing changed
+
       if (
         updatedUser.name === originalUser.name &&
         updatedUser.lastname === originalUser.lastname &&
         updatedUser.age === String(originalUser.age)
       ) {
-        showModal("⚠️ No changes detected.", "warning");
+        showModal("⚠️ No has editado ningún dato.", "warning");
         return;
       }
 
       try {
-        await updateUser(updatedUser); // function from auth.js
-        showModal("✅ Profile updated successfully", "success", false, () => {
+        await updateUser(updatedUser);
+        showModal("✅ Perfil actualizado correctamente", "success", false, () => {
           window.location.href = "/profile";
         });
       } catch (err) {
-        showModal("❌ Error updating profile: " + (err.message || "unknown"), "error");
+        showModal("❌ Error al actualizar: " + (err.message || "desconocido"), "error");
       }
     });
 
-    /**
-     * Cancel editing the profile and navigate back to the profile page.
-     */
-    function cancelEdit(){
+    function cancelEdit() {
       window.location.href = "/profile";
     }
+    function handleLogout() {
+      showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
+        logout();
+      });
+    }
 
-    /**
-     * Display a modal dialog with a message, optional cancel button, and optional callback.
-     * @param {string} message - The message to show in the modal.
-     * @param {string} [type="success"] - The type of modal: "success", "error", or "warning".
-     * @param {boolean} [withCancel=false] - Whether to show a Cancel button.
-     * @param {Function} [onConfirm=null] - Callback function to execute when OK is clicked.
-     */
-    function showModal(message, type="success", withCancel=false, onConfirm=null) {
-      const modal=document.getElementById("feedbackModal");
-      const msg=document.getElementById("modalMessage");
-      const buttons=document.getElementById("modalButtons");
+    function goToProfile() {
+      window.location.href = '/profile';
+    }
+    function toggleDropdown() {
+      const dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('show');
+    }
 
-      msg.textContent=message;
-      document.getElementById("modalContent").className=`modal-box ${type}`;
-
-      buttons.innerHTML="";
-      const ok=document.createElement("button");
-      ok.textContent="OK"; ok.className="ok-btn";
-      ok.onclick=()=>{ closeModal(); if(onConfirm) onConfirm(); };
-      buttons.appendChild(ok);
-
-      if(withCancel){
-        const cancel=document.createElement("button");
-        cancel.textContent="Cancel"; cancel.className="cancel-btn";
-        cancel.onclick=()=>{ closeModal(); };
-        buttons.appendChild(cancel);
+    // Cerrar dropdown al hacer clic fuera
+    window.onclick = function(event) {
+      if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
+        const dropdown = document.getElementById('userDropdown');
+        if (dropdown.classList.contains('show')) {
+          dropdown.classList.remove('show');
+        }
       }
-
-      modal.style.display="flex";
     }
 
-    /**
-     * Close the currently displayed modal.
-     */
-    function closeModal(){ 
-      document.getElementById("feedbackModal").style.display="none"; 
-    }
   </script>
 </body>
 
 </html>
-

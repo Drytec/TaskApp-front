@@ -2,18 +2,15 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TaskApp - New Task</title>
-  <link rel="stylesheet" href="/src/css/new-task.css"/>
-  <!--
-    @file new-task.html
-    @description Page for creating a new task in TaskApp (TicTask). Includes form submission, validation, modal feedback, and redirection.
-  -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskApp - Nueva tarea</title>
+  <link rel="stylesheet" href="/src/css/new-task.css" />
+  <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
+
 </head>
 
 <body>
-  <!-- Header -->
   <header class="header">
     <div class="header-left">
       <a href="/welcome-dashboard" class="logo-link">
@@ -23,69 +20,65 @@
     <div class="header-right">
       <div class="user-menu" onclick="toggleDropdown()">
         <div class="user-avatar" id="userAvatar">U</div>
-        <span class="user-name" id="userName">User</span>
+        <span class="user-name" id="userName">Usuario</span>
         <div class="dropdown-icon">▼</div>
         <div class="dropdown-menu" id="userDropdown">
-          <div class="dropdown-item" onclick="goToProfile()">👤 My Profile</div>
-          <div class="dropdown-item" onclick="goToSettings()">⚙️ Settings</div>
+          <div class="dropdown-item" onclick="goToProfile()">👤 Mi perfil</div>
           <div class="dropdown-divider"></div>
-          <div class="dropdown-item logout" onclick="handleLogout()">🚪 Logout</div>
+          <div class="dropdown-item logout" onclick="handleLogout()">🚪 Cerrar sesión</div>
         </div>
       </div>
     </div>
   </header>
-
-  <!-- New Task Form -->
   <main class="main-content">
     <div class="form-container">
       <div class="form-header">
         <div class="form-icon">✏️</div>
         <div>
-          <h1 class="form-title">New Task</h1>
-          <p class="form-subtitle">Create a new task and keep your day organized</p>
+          <h1 class="form-title">Nueva tarea</h1>
+          <p class="form-subtitle">Crea una nueva tarea y mantén tu día organizado</p>
         </div>
       </div>
 
       <form id="newTaskForm" class="task-form">
         <div class="form-section">
-          <h3 class="section-title">Basic Information</h3>
+          <h3 class="section-title">Información básica</h3>
           <div class="form-group">
-            <label for="title">Title *</label>
-            <input id="title" maxlength="50" required class="form-input"/>
+            <label for="title">Título *</label>
+            <input id="title" maxlength="50" required class="form-input" />
             <span class="char-counter">0/50</span>
           </div>
           <div class="form-group">
-            <label for="description">Description</label>
+            <label for="description">Descripción</label>
             <textarea id="description" maxlength="300" rows="3" class="form-textarea"></textarea>
             <span class="char-counter">0/300</span>
           </div>
         </div>
 
         <div class="form-section">
-          <h3 class="section-title">Date & Time</h3>
-          <input type="date" id="dueDate" class="form-input"/>
-          <input type="time" id="dueTime" class="form-input"/>
+          <h3 class="section-title">Fecha y hora</h3>
+          <input type="date" id="dueDate" class="form-input" />
+          <input type="time" id="dueTime" class="form-input" />
         </div>
 
         <div class="form-section">
-          <h3 class="section-title">Settings</h3>
+          <h3 class="section-title">Configuración</h3>
           <select id="status" class="form-input">
-            <option value="Por hacer">To Do</option>
-            <option value="Haciendo">In Progress</option>
-            <option value="Hecho">Done</option>
+            <option value="Por hacer">Por hacer</option>
+            <option value="Haciendo">Haciendo</option>
+            <option value="Hecho">Hecho</option>
           </select>
-          <label><input type="checkbox" id="isImportant"/> ⭐ Important</label>
+          <label><input type="checkbox" id="isImportant" /> ⭐ Importante</label>
         </div>
 
         <div class="form-actions">
-          <button type="button" class="btn-secondary" onclick="cancelTask()">✕ Cancel</button>
-          <button type="submit" class="btn-primary" id="submitBtn">💾 Save Task</button>
+          <button type="button" class="btn-secondary" onclick="cancelTask()">✕ Cancelar</button>
+          <button type="submit" class="btn-primary" id="submitBtn">💾 Guardar tarea</button>
         </div>
       </form>
     </div>
   </main>
 
-  <!-- Feedback Modal -->
   <div class="modal-overlay" id="feedbackModal">
     <div class="modal-box" id="modalContent">
       <p id="modalMessage"></p>
@@ -96,62 +89,10 @@
   <script src="/js/auth.js"></script>
   <script src="/js/tasks.js"></script>
   <script>
-    /**
-     * @file new-task.js
-     * @description Handles new task form submission, validation, feedback modal, and cancel action.
-     */
 
-    /**
-     * Show a feedback modal (success/error/confirmation)
-     * @param {string} message - Message to display in the modal
-     * @param {string} [type="success"] - Type of modal: 'success', 'error'
-     * @param {boolean} [withCancel=false] - Include a cancel button
-     * @param {Function|null} [onConfirm=null] - Callback for OK button
-     */
-    function showModal(message, type="success", withCancel=false, onConfirm=null) {
-      const modal = document.getElementById("feedbackModal");
-      const msg = document.getElementById("modalMessage");
-      const buttons = document.getElementById("modalButtons");
 
-      msg.textContent = message;
-      document.getElementById("modalContent").className = `modal-box ${type}`;
 
-      buttons.innerHTML = "";
-      const ok = document.createElement("button");
-      ok.textContent = "OK"; ok.className = "ok-btn";
-      ok.onclick = () => { closeModal(); if(onConfirm) onConfirm(); };
-      buttons.appendChild(ok);
 
-      if (withCancel) {
-        const cancel = document.createElement("button");
-        cancel.textContent = "Cancel"; cancel.className = "cancel-btn";
-        cancel.onclick = () => { closeModal(); };
-        buttons.appendChild(cancel);
-      }
-
-      modal.style.display = "flex";
-    }
-
-    /** Close the feedback modal */
-    function closeModal() {
-      document.getElementById("feedbackModal").style.display = "none";
-    }
-
-    /**
-     * Handle cancel task action with confirmation modal
-     */
-    function cancelTask() {
-      showModal(
-        "Are you sure you want to cancel? Changes will be lost.",
-        "error",
-        true,
-        () => { window.location.href = "/dashboard"; }
-      );
-    }
-
-    /**
-     * Handle new task form submission
-     */
     document.getElementById("newTaskForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const submitBtn = document.getElementById('submitBtn');
@@ -166,28 +107,78 @@
         status: document.getElementById('status').value
       };
 
-      // Debug: log task data
-      console.log('Task data to send:', taskData);
 
-      // Validate task
+      console.log('Datos de la tarea a enviar:', taskData);
+      console.log('DueDate original del input:', document.getElementById('dueDate').value);
+      console.log('DueDate en taskData:', taskData.dueDate);
+
       const error = validateTask(taskData);
       if (error) { showModal(error, "error"); return; }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "⏳ Saving...";
-
+      submitBtn.disabled = true; submitBtn.textContent = "⏳ Guardando...";
       const result = await createTask(taskData);
 
       if (result.success) {
-        showModal(`✅ Task "${taskData.taskName}" created successfully!`, "success", false, () => {
+        showModal(`✅ Tarea "${taskData.taskName}" creada exitosamente!`, "success", false, () => {
           window.location.href = "/dashboard";
         });
       } else {
         showModal(`❌ ${result.error}`, "error");
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
+        submitBtn.disabled = false; submitBtn.textContent = originalText;
       }
     });
+
+
+    function cancelTask() {
+      showModal("¿Seguro que quieres cancelar? Se perderán los cambios.", "error", true, () => {
+        window.location.href = "/dashboard";
+      });
+    }
+    function goToProfile() {
+      window.location.href = '/profile';
+    }
+    function handleLogout() {
+      showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
+        logout();
+      });
+    }
+    function toggleDropdown() {
+      const dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    window.onclick = function (event) {
+      if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
+        const dropdown = document.getElementById('userDropdown');
+        if (dropdown.classList.contains('show')) {
+          dropdown.classList.remove('show');
+        }
+      }
+    }
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const token = getToken();
+        if (!token) return;
+
+        const res = await fetch(`${API_URL}/users/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          document.getElementById("userName").textContent = user.name || "Usuario";
+          document.getElementById("userAvatar").textContent = user.name
+            ? user.name.charAt(0).toUpperCase()
+            : "U";
+        } else {
+          console.warn("No se pudieron cargar los datos del usuario.");
+        }
+      } catch (err) {
+        console.error("Error cargando usuario:", err);
+      }
+    });
+
+
   </script>
 </body>
 

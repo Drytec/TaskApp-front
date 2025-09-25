@@ -3,120 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TicTask - Task Management</title>
+    <title>TicTask - Gestión de Tareas</title>
     <link rel="stylesheet" href="/src/css/home.css">
-    <!--
-      @file home.html
-      @description Landing page for TicTask web application.
-      Includes Hero section, Features section, About team section, and Footer.
-      This page is static and does not contain JavaScript logic.
-    -->
+    <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
 </head>
 <body>
-    <!-- Header Section -->
-    <!-- Contains the logo, navigation links, and authentication buttons -->
+
     <header class="header">
         <h1 class="logo">TicTask</h1>
         
         <nav class="nav-links">
-            <a href="#features" class="nav-link">Features</a>
-            <a href="#about" class="nav-link">About Us</a>
+            <a href="#features" class="nav-link">Características</a>
+            <a href="#about" class="nav-link">Sobre nosotros</a>
+            <a href="#sitemap" class="nav-link">Mapa del sitio</a>
         </nav>
         
         <div class="auth-buttons">
-            <a href="/login" class="btn btn-login">Login</a>
-            <a href="/signup" class="btn btn-signup">Sign Up</a>
+            <a href="/login" class="btn btn-login">Iniciar sesión</a>
+            <a href="/signup" class="btn btn-signup">Registrarse</a>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <!-- Main marketing message and subtitle -->
     <section class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">Organize your tasks, maximize your productivity</h1>
-            <p class="hero-subtitle">
-                TicTask helps you manage your daily tasks, projects, and goals easily and efficiently. Keep everything organized in one place.
-            </p>
+            <h1 class="hero-title">Organiza tus tareas, maximiza tu productividad</h1>
+            <p class="hero-subtitle">TicTask te ayuda a gestionar tus tareas diarias, proyectos y metas de forma sencilla y eficiente. Mantén todo organizado en un solo lugar.</p>
         </div>
     </section>
-
-    <!-- Features Section -->
-    <!-- Highlights main app features with icons and descriptions -->
     <section class="features" id="features">
         <div class="features-container">
-            <h2 class="section-title">Main Features</h2>
-            <p class="section-subtitle">See how TicTask can help you organize your life and increase productivity</p>
+            <h2 class="section-title">Características principales</h2>
+            <p class="section-subtitle">Descubre cómo TicTask puede ayudarte a organizar tu vida y aumentar tu productividad</p>
             
             <div class="feature-cards">
                 <div class="feature-card">
                     <div class="feature-icon">📋</div>
-                    <h3 class="feature-title">Task Management</h3>
-                    <p class="feature-description">Create, organize, and prioritize your daily tasks.</p>
+                    <h3 class="feature-title">Gestión de tareas</h3>
+                    <p class="feature-description">Crea, organiza y prioriza tus tareas diarias.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3 class="feature-title">Progress Tracking</h3>
-                    <p class="feature-description">Visualize your progress and keep track of completed tasks.</p>
+                    <h3 class="feature-title">Seguimiento de progreso</h3>
+                    <p class="feature-description">Visualiza tu progreso y mantén un registro de tus tareas completadas.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="feature-icon">✅</div>
-                    <h3 class="feature-title">Easy Organization</h3>
-                    <p class="feature-description">Intuitive interface allows you to organize tasks by status or date.</p>
+                    <h3 class="feature-title">Organización sencilla</h3>
+                    <p class="feature-description">Interfaz intuitiva que te permite organizar tus tareas por estados o fechas.</p>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- About Section -->
-    <!-- Introduces the development team -->
     <section class="about" id="about">
         <div class="about-container">
-            <h2 class="section-title">About Us</h2>
-            <p class="section-subtitle">
-                We are a team of 5 developers committed to creating the best task management tool. Each member contributes unique expertise to make TicTask a reality.
-            </p>
+            <h2 class="section-title">Sobre nosotros</h2>
+            <p class="section-subtitle">Somos un equipo de 5 desarrolladores comprometidos con crear la mejor herramienta de gestión de tareas. Cada uno aporta su experiencia única para hacer de TicTask una realidad.</p>
             
             <div class="team-grid">
-                <!-- Individual team members -->
                 <div class="team-member">
                     <div class="member-avatar">S</div>
                     <h3 class="member-name">Samuel</h3>
                     <p class="member-role">Product Owner & Backend</p>
-                    <p class="member-description">Leads product vision and contributes to backend development, ensuring TicTask meets user needs.</p>
+                    <p class="member-description">Lidera la visión del producto y contribuye al desarrollo backend, asegurando que TicTask cumpla con las necesidades de los usuarios.</p>
                 </div>
                 
                 <div class="team-member">
                     <div class="member-avatar">D</div>
                     <h3 class="member-name">Dylan</h3>
                     <p class="member-role">Backend Developer</p>
-                    <p class="member-description">Specializes in backend development, creating robust and scalable APIs for optimal application performance.</p>
+                    <p class="member-description">Especialista en desarrollo backend, creando APIs robustas y escalables para garantizar el rendimiento óptimo de la aplicación.</p>
                 </div>
                 
                 <div class="team-member">
                     <div class="member-avatar">J</div>
                     <h3 class="member-name">James</h3>
                     <p class="member-role">Database Engineer</p>
-                    <p class="member-description">Database expert designing efficient structures and optimizing queries for reliable data storage.</p>
+                    <p class="member-description">Experto en bases de datos, diseñando estructuras eficientes y optimizando consultas para un almacenamiento de datos confiable.</p>
                 </div>
                 
                 <div class="team-member">
                     <div class="member-avatar">L</div>
                     <h3 class="member-name">Laura</h3>
                     <p class="member-role">Frontend Developer</p>
-                    <p class="member-description">Frontend developer focused on intuitive and attractive interfaces that enhance user experience.</p>
+                    <p class="member-description">Desarrolladora frontend enfocada en crear interfaces intuitivas y atractivas que mejoren la experiencia del usuario.</p>
                 </div>
                 
                 <div class="team-member">
                     <div class="member-avatar">E</div>
                     <h3 class="member-name">Esteban</h3>
                     <p class="member-role">Frontend Developer</p>
-                    <p class="member-description">Frontend developer specializing in interactivity and responsiveness, ensuring TicTask works perfectly on all devices.</p>
+                    <p class="member-description">Desarrollador frontend especializado en interactividad y responsividad, asegurando que TicTask funcione perfectamente en todos los dispositivos.</p>
                 </div>
             </div>
         </div>
     </section>
+
     <section class="sitemap" id="sitemap">
         <div class="sitemap-container">
             <h2 class="section-title">Mapa del Sitio</h2>
@@ -162,17 +145,16 @@
             </div>
         </div>
     </section>
-    <!-- Footer Section -->
-    <!-- Contains app logo, footer links, and copyright -->
+
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-logo">TicTask</div>
             <div class="footer-links">
-                <a href="#" class="footer-link">Terms</a>
-                <a href="#" class="footer-link">Privacy</a>
-                <a href="#" class="footer-link">Help</a>
+                <a href="#" class="footer-link">Términos</a>
+                <a href="#" class="footer-link">Privacidad</a>
+                <a href="#" class="footer-link">Ayuda</a>
             </div>
-            <div class="copyright">&copy; 2023 TicTask. All rights reserved.</div>
+            <div class="copyright">&copy; 2025 TicTask. Todos los derechos reservados.</div>
         </div>
     </footer>
 </body>

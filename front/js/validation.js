@@ -1,23 +1,11 @@
-/**
- * @file form-validation.js
- * @description Handles client-side validation for signup and login forms, including password rules and real-time error display.
- */
-
-/** @type {HTMLFormElement} */
-const form = document.getElementById('form');
-
-/** @type {HTMLInputElement} */
-const nameInput = form.querySelector('[name="name"]');
-const lastNamesInput = form.querySelector('[name="lastNames"]');
-const ageInput = form.querySelector('[name="age"]');
-const emailInput = form.querySelector('[name="email"]');
-const passwordInput = form.querySelector('[name="password"]');
-const confirmPasswordInput = form.querySelector('[name="confirmPassword"]');
-
-/** @type {HTMLElement} */
-const errorMessage = document.getElementById('error-message');
-
-/** @type {Object<string, HTMLElement>} */
+const form = document.getElementById('form')
+const nameInput = form.querySelector('[name="name"]')
+const lastNamesInput = form.querySelector('[name="lastNames"]')
+const ageInput = form.querySelector('[name="age"]')
+const emailInput = form.querySelector('[name="email"]')
+const passwordInput = form.querySelector('[name="password"]')
+const confirmPasswordInput = form.querySelector('[name="confirmPassword"]')
+const errorMessage = document.getElementById('error-message')
 const rules = {
     length: document.getElementById('rule-length'),
     uppercase: document.getElementById('rule-uppercase'),
@@ -25,56 +13,53 @@ const rules = {
     special: document.getElementById('rule-special')
 };
 
-/**
- * Marks an element as valid.
- * @param {HTMLElement} element
- */
 function setValid(element) {
     element.classList.add('valid');
     element.classList.remove('invalid');
 }
 
-/**
- * Marks an element as invalid.
- * @param {HTMLElement} element
- */
 function setInvalid(element) {
     element.classList.add('invalid');
     element.classList.remove('valid');
 }
 
-/**
- * Updates password validation rules UI.
- * @param {string} password - The password to validate
- */
+form.addEventListener('submit', (e) => {
+    form.querySelectorAll('.incorrect').forEach(el => el.classList.remove('incorrect'))
+    let errors = []
+    if (nameInput){
+        errors=getSignupFormErrors(nameInput.value,lastNamesInput.value,ageInput.value,emailInput.value,passwordInput.value,confirmPasswordInput.value)
+    }
+    else {
+        errors=getLoginFormErrors(emailInput.value,passwordInput.value)
+    }
+    if (errors.length>0) {
+        e.preventDefault()
+        errorMessage.innerText = errors.join(" - ")
+    }
+})
+passwordInput.addEventListener('input', () => {
+    updatePasswordRules(passwordInput.value);
+});
+
 function updatePasswordRules(password) {
+
     password.length >= 8 ? setValid(rules.length) : setInvalid(rules.length);
     /[A-Z]/.test(password) ? setValid(rules.uppercase) : setInvalid(rules.uppercase);
     /[0-9]/.test(password) ? setValid(rules.number) : setInvalid(rules.number);
     /[!@#$%^&*]/.test(password) ? setValid(rules.special) : setInvalid(rules.special);
 }
 
-/**
- * Validates the signup form inputs.
- * @param {string} name
- * @param {string} lastNames
- * @param {number|string} age
- * @param {string} email
- * @param {string} password
- * @param {string} confirmPassword
- * @returns {string[]} Array of error messages, empty if no errors
- */
-function getSignupFormErrors(name, lastNames, age, email, password, confirmPassword) {
-    let errors = [];
-    if (name === '' || name === null) {
+function getSignupFormErrors(name,lastNames,age,email,password,confirmPassword) {
+    let errors = []
+    if (name==='' || name===null) {
         errors.push('Nombre es requerido');
         nameInput.classList.add('incorrect');
     }
-    if (lastNames === '' || lastNames === null) {
+    if (lastNames==='' || lastNames===null) {
         errors.push('Apellidos son requeridos');
         lastNamesInput.classList.add('incorrect');
     }
-    if (age === '' || age === null) {
+    if (age==='' || age===null) {
         errors.push('Edad es requerida');
         ageInput.classList.add('incorrect');
     }
@@ -82,7 +67,7 @@ function getSignupFormErrors(name, lastNames, age, email, password, confirmPassw
         errors.push('Edad no puede ser negativa');
         ageInput.classList.add('incorrect');
     }
-    if (email === '' || email === null) {
+    if (email==='' || email===null) {
         errors.push('Correo Electrónico es requerido');
         emailInput.classList.add('incorrect');
     }
@@ -90,7 +75,7 @@ function getSignupFormErrors(name, lastNames, age, email, password, confirmPassw
         errors.push('El correo electrónico es inválido');
         emailInput.classList.add('incorrect');
     }
-    if (password === '' || password === null) {
+    if (password==='' || password===null) {
         errors.push('Contraseña es requerida');
         passwordInput.classList.add('incorrect');
     }
@@ -99,68 +84,33 @@ function getSignupFormErrors(name, lastNames, age, email, password, confirmPassw
         confirmPasswordInput.classList.add('incorrect');
     }
 
+    
     if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
         errors.push('La contraseña es invalida');
     }
 
-    return errors;
+    return errors
 }
 
-/**
- * Validates the login form inputs.
- * @param {string} email
- * @param {string} password
- * @returns {string[]} Array of error messages, empty if no errors
- */
-function getLoginFormErrors(email, password) {
-    let errors = [];
-    if (email === '' || email === null) {
+function getLoginFormErrors(email,password){
+    let errors = []
+
+    if (email==='' || email===null) {
         errors.push('Correo Electrónico es requerido');
-        emailInput.classList.add('incorrect');
-    }
-    if (password === '' || password === null) {
+        emailInput.classList.add('incorrect');}
+    if (password==='' || password===null) {
         errors.push('Contraseña es requerida');
         passwordInput.classList.add('incorrect');
-    }
-    return errors;
+    
+    return errors
+}
 }
 
-/**
- * Handles form submission for signup/login, validates inputs, and displays errors.
- */
-form.addEventListener('submit', (e) => {
-    form.querySelectorAll('.incorrect').forEach(el => el.classList.remove('incorrect'));
-    let errors = [];
-    if (nameInput) {
-        errors = getSignupFormErrors(
-            nameInput.value,
-            lastNamesInput.value,
-            ageInput.value,
-            emailInput.value,
-            passwordInput.value,
-            confirmPasswordInput.value
-        );
-    } else {
-        errors = getLoginFormErrors(emailInput.value, passwordInput.value);
-    }
-
-    if (errors.length > 0) {
-        e.preventDefault();
-        errorMessage.innerText = errors.join(" - ");
-    }
-});
-
-// Update password rules on input
-passwordInput.addEventListener('input', () => {
-    updatePasswordRules(passwordInput.value);
-});
-
-// Remove incorrect class on input
-const allInputs = [nameInput, lastNamesInput, ageInput, emailInput, passwordInput, confirmPasswordInput];
+const allInputs = [nameInput, lastNamesInput, ageInput, emailInput, passwordInput, confirmPasswordInput]
 allInputs.forEach(input => {
     input.addEventListener('input', () => {
         if (input.classList.contains('incorrect')) {
-            input.classList.remove('incorrect');
+            input.classList.remove('incorrect')
         }
-    });
-});
+    })
+})

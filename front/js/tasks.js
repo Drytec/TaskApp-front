@@ -1,16 +1,7 @@
-/**
- * @file tasks.js
- * @description Handles all task-related operations including validation, creation, retrieval, update, and deletion of tasks.
- */
 
- /**
-  * Validate task data before sending it to the backend
-  * @param {Object} taskData - The task object to validate
-  * @param {string} taskData.taskName - Name/title of the task
-  * @param {string} [taskData.taskDescription] - Optional description of the task
-  * @param {string} taskData.status - Task status ("Por hacer" | "Haciendo" | "Hecho")
-  * @returns {string|null} Returns an error message if validation fails, otherwise null
-  */
+
+
+
 function validateTask(taskData) {
     if (!taskData.taskName || taskData.taskName.trim() === "") {
         return "⚠️ El título es obligatorio";
@@ -27,25 +18,19 @@ function validateTask(taskData) {
     return null;
 }
 
-/**
- * Create a new task
- * @param {Object} taskData - Task data to create
- * @param {string} taskData.taskName - Task title
- * @param {string} [taskData.taskDescription] - Optional task description
- * @param {boolean} [taskData.isImportant=false] - If task is marked important
- * @param {string} [taskData.dueDate=null] - Optional due date
- * @param {string} [taskData.dueTime=null] - Optional due time
- * @param {string} [taskData.status="Por hacer"] - Task status
- * @returns {Promise<Object>} Returns a promise resolving to { success: true, data } on success or { success: false, error } on failure
- */
 async function createTask(taskData) {
     try {
         const token = getToken();
-        if (!token) throw new Error('Not authenticated');
+        if (!token) {
+            throw new Error('Not authenticated');
+        }
 
         const response = await fetch(`${API_URL}/tasks`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
                 taskName: taskData.taskName,
                 taskDescription: taskData.taskDescription || '',
@@ -57,7 +42,10 @@ async function createTask(taskData) {
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Error creating task');
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error creating task');
+        }
 
         return { success: true, data };
     } catch (error) {
@@ -65,18 +53,25 @@ async function createTask(taskData) {
     }
 }
 
-/**
- * Get all tasks for the authenticated user
- * @returns {Promise<Object>} Returns a promise resolving to { success: true, data } or { success: false, error }
- */
+
 async function getAllTasks() {
     try {
         const token = getToken();
-        if (!token) throw new Error('Not authenticated');
+        if (!token) {
+            throw new Error('Not authenticated');
+        }
 
-        const response = await fetch(`${API_URL}/tasks`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const response = await fetch(`${API_URL}/tasks`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Error getting tasks');
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error getting tasks');
+        }
 
         return { success: true, data };
     } catch (error) {
@@ -84,25 +79,28 @@ async function getAllTasks() {
     }
 }
 
-/**
- * Update an existing task
- * @param {string} taskId - ID of the task to update
- * @param {Object} updateData - Fields to update
- * @returns {Promise<Object>} Returns a promise resolving to { success: true, data } or { success: false, error }
- */
+
 async function updateTask(taskId, updateData) {
     try {
         const token = getToken();
-        if (!token) throw new Error('Not authenticated');
+        if (!token) {
+            throw new Error('Not authenticated');
+        }
 
         const response = await fetch(`${API_URL}/tasks/${taskId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(updateData)
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Error updating task');
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error updating task');
+        }
 
         return { success: true, data };
     } catch (error) {
@@ -110,19 +108,19 @@ async function updateTask(taskId, updateData) {
     }
 }
 
-/**
- * Delete a task
- * @param {string} taskId - ID of the task to delete
- * @returns {Promise<Object>} Returns a promise resolving to { success: true } or { success: false, error }
- */
+
 async function deleteTask(taskId) {
     try {
         const token = getToken();
-        if (!token) throw new Error('Not authenticated');
+        if (!token) {
+            throw new Error('Not authenticated');
+        }
 
         const response = await fetch(`${API_URL}/tasks/${taskId}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
@@ -136,22 +134,25 @@ async function deleteTask(taskId) {
     }
 }
 
-/**
- * Get a specific task by ID
- * @param {string} taskId - ID of the task to retrieve
- * @returns {Promise<Object>} Returns a promise resolving to { success: true, data } or { success: false, error }
- */
+
 async function getTask(taskId) {
     try {
         const token = getToken();
-        if (!token) throw new Error('Not authenticated');
+        if (!token) {
+            throw new Error('Not authenticated');
+        }
 
         const response = await fetch(`${API_URL}/tasks/${taskId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Error getting task');
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error getting task');
+        }
 
         return { success: true, data };
     } catch (error) {
@@ -161,10 +162,10 @@ async function getTask(taskId) {
 
 console.log('Tasks.js loaded successfully');
 
-// Export functions globally for usage in HTML scripts
+
 window.createTask = createTask;
 window.getAllTasks = getAllTasks;
 window.updateTask = updateTask;
 window.deleteTask = deleteTask;
 window.getTask = getTask;
-window.validateTask = validateTask;
+window.validateTask = validateTask; 

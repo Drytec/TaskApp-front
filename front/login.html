@@ -4,46 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskApp - Login</title>
+    <title>TaskApp - Iniciar Sesión</title>
     <link rel="stylesheet" href="/src/css/login.css">
-    <!--
-      @file login.html
-      @description Login page for TaskApp (TicTask). Includes form validation, toast messages, and spinner UI.
-    -->
+    <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
 </head>
 
 <body>
     <div class="container">
         <div class="form-wrapper">
             <div class="header">
-                <h1 class="logo">TicTask</h1>
-                <p class="subtitle">Organize your day, achieve your goals</p>
-                <a href="/index" class="back-to-home">← Back to Home</a>
+                <img src="/public/favicon.jpeg" class="logo-image" alt="TicTask">
+
+                <p class="subtitle">Organiza tu día, cumple tus metas</p>
+                <a href="/index" class="back-to-home">← Volver al inicio</a>
             </div>
 
             <div class="form-container">
-                <h2 class="form-title">Login</h2>
-                <p class="form-subtitle">Welcome back</p>
-                
+                <h2 class="form-title">Iniciar sesión</h2>
+                <p class="form-subtitle">Bienvenido de vuelta</p>
+
                 <form class="login-form">
                     <div class="input-group">
                         <label for="email" class="input-label">
-                            Email <span class="required">*</span>
+                            Correo electrónico <span class="required">*</span>
                         </label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            class="input-field" 
-                            placeholder="your@email.com"
-                            required
-                        >
+                        <input type="email" id="email" name="email" class="input-field" placeholder="tu@email.com"
+                            required>
                         <div class="error-message" id="email-error"></div>
                     </div>
 
                     <div class="input-group">
                         <label for="password" class="input-label">
-                            Password <span class="required">*</span>
+                            Contraseña <span class="required">*</span>
                         </label>
                         <input type="password" id="password" name="password" class="input-field" placeholder="••••••••"
                             required>
@@ -51,174 +43,201 @@
                     </div>
 
                     <button type="submit" class="submit-btn" id="login-btn">
-                        <span class="btn-text">Login</span>
+                        <span class="btn-text">Iniciar sesión</span>
                         <div class="spinner hidden" id="login-spinner"></div>
                     </button>
 
                     <div class="form-links">
-                        <a href="/password-recovery" class="forgot-password">Forgot password?</a>
+                        <a href="/password-recovery" class="forgot-password">¿Olvidaste tu contraseña?</a>
                     </div>
                 </form>
 
                 <div class="signup-link">
-                    <span>Don't have an account? </span>
-                    <a href="/signup" class="link">Sign up</a>
+                    <span>¿No tienes cuenta? </span>
+                    <a href="/signup" class="link">Regístrate</a>
                 </div>
             </div>
         </div>
     </div>
-    
+
+
     <div class="toast" id="toast">
         <div class="toast-content">
             <span class="toast-message"></span>
         </div>
     </div>
 
-
     <script>
-    /**
-     * @file login.js
-     * @description Handles login form validation, spinner, toast notifications, and API simulation for TaskApp.
-     */
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const loginForm = document.querySelector('.login-form');
-        const loginBtn = document.getElementById('login-btn');
-        const loginSpinner = document.getElementById('login-spinner');
-        const btnText = document.querySelector('.btn-text');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.querySelector('.toast-message');
 
-        /**
-         * Show a toast notification
-         * @param {string} message - Message to display
-         * @param {boolean} [isError=false] - Whether the toast is an error
-         */
-        function showToast(message, isError = false) {
-            toastMessage.textContent = message;
-            toast.className = `toast ${isError ? 'error' : ''}`;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.querySelector('.login-form');
+            const loginBtn = document.getElementById('login-btn');
+            const loginSpinner = document.getElementById('login-spinner');
+            const btnText = document.querySelector('.btn-text');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.querySelector('.toast-message');
 
-        /**
-         * Toggle spinner and button state
-         * @param {boolean} show - Show spinner if true, hide if false
-         */
-        function toggleSpinner(show) {
-            if (show) {
-                loginSpinner.classList.remove('hidden');
-                btnText.classList.add('loading');
-                loginBtn.disabled = true;
-            } else {
-                loginSpinner.classList.add('hidden');
-                btnText.classList.remove('loading');
-                loginBtn.disabled = false;
-            }
-        }
 
-        /**
-         * Validate email format
-         * @param {string} email - Email string to validate
-         * @returns {boolean} True if email is valid
-         */
-        function validateEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
+            function showToast(message, isError = false) {
+                toastMessage.textContent = message;
+                toast.className = `toast ${isError ? 'error' : ''}`;
+                toast.classList.add('show');
 
-        /**
-         * Clear all field error messages
-         */
-        function clearErrors() {
-            document.querySelectorAll('.error-message').forEach(error => {
-                error.classList.remove('show');
-                error.textContent = '';
-            });
-        }
-
-        /**
-         * Show error for specific input field
-         * @param {string} fieldId - Input field ID
-         * @param {string} message - Error message
-         */
-        function showFieldError(fieldId, message) {
-            const input = document.getElementById(fieldId);
-            const errorElement = document.getElementById(fieldId + '-error');
-            input.classList.add('error');      // add red border via CSS
-            errorElement.textContent = message;
-            errorElement.classList.add('show');
-        }
-
-        /**
-         * Handle login form submission
-         * @param {Event} e - Submit event
-         */
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            clearErrors();
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            // Basic validations
-            if (!email) {
-                showFieldError('email', 'Email is required');
-                return;
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
             }
 
-            if (!validateEmail(email)) {
-                showFieldError('email', 'Enter a valid email');
-                return;
-            }
 
-            if (!password) {
-                showFieldError('password', 'Password is required');
-                return;
-            }
-
-            if (password.length < 6) {
-                showFieldError('password', 'Password must be at least 6 characters');
-                return;
-            }
-
-            toggleSpinner(true);
-
-            try {
-                // 👇 Call login function from auth.js
-                const result = await login(email, password);
-
-                if (result.success) {
-                    showToast('Login successful!');
-                    setTimeout(() => {
-                        window.location.href = '/welcome-dashboard';
-                    }, 1000);
+            function toggleSpinner(show) {
+                if (show) {
+                    loginSpinner.classList.remove('hidden');
+                    btnText.classList.add('loading');
+                    loginBtn.disabled = true;
                 } else {
-                    // Show backend error
-                    showFieldError('password', result.error);
-                    showToast(result.error, true);
+                    loginSpinner.classList.add('hidden');
+                    btnText.classList.remove('loading');
+                    loginBtn.disabled = false;
                 }
-            } catch (error) {
-                console.error('Login error:', error);
-                showToast('Error logging in. Please try again.', true);
-            } finally {
-                toggleSpinner(false);
             }
-        });
 
-        // Clear field errors on input
-        document.getElementById('email').addEventListener('input', () => {
-            document.getElementById('email-error').classList.remove('show');
-        });
 
-        document.getElementById('password').addEventListener('input', () => {
-            document.getElementById('password-error').classList.remove('show');
+            function validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+
+            function clearErrors() {
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.classList.remove('show');
+                    error.textContent = '';
+                });
+            }
+
+
+            function showFieldError(fieldId, message) {
+                const input = document.getElementById(fieldId);
+                const errorElement = document.getElementById(fieldId + '-error');
+                input.classList.add('error');
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+            }
+
+
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                clearErrors();
+
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+
+                if (!email) {
+                    showFieldError('email', 'El correo electrónico es requerido');
+                    return;
+                }
+
+                if (!validateEmail(email)) {
+                    showFieldError('email', 'Ingresa un correo electrónico válido');
+                    return;
+                }
+
+                if (!password) {
+                    showFieldError('password', 'La contraseña es requerida');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showFieldError('password', 'La contraseña debe tener al menos 6 caracteres');
+                    return;
+                }
+
+
+                toggleSpinner(true);
+
+                try {
+
+
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+
+
+
+                    if (email === 'admin@test.com' && password === '123456') {
+                        showToast('¡Inicio de sesión exitoso!');
+
+
+                        setTimeout(() => {
+                            window.location.href = '/welcome-dashboard';
+                        }, 1000);
+                    }
+                } catch (error) {
+                    console.error('Error en login:', error);
+                    showToast('Error al iniciar sesión. Intenta nuevamente.', true);
+                    toggleSpinner(false);
+                }
+            });
+
+
+            document.getElementById('email').addEventListener('input', function () {
+                const errorElement = document.getElementById('email-error');
+                errorElement.classList.remove('show');
+            });
+
+            document.getElementById('password').addEventListener('input', function () {
+                const errorElement = document.getElementById('password-error');
+                errorElement.classList.remove('show');
+
+
+                loginForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    clearErrors();
+
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value;
+
+
+                    if (!email) {
+                        showFieldError('email', 'El correo electrónico es requerido');
+                        return;
+                    }
+                    if (!validateEmail(email)) {
+                        showFieldError('email', 'Ingresa un correo electrónico válido');
+                        return;
+                    }
+                    if (!password) {
+                        showFieldError('password', 'La contraseña es requerida');
+                        return;
+                    }
+
+                    toggleSpinner(true);
+
+                    try {
+
+                        const result = await login(email, password);
+
+                        if (result.success) {
+                            showToast('¡Inicio de sesión exitoso!');
+                            setTimeout(() => {
+                                window.location.href = '/welcome-dashboard';
+                            }, 1000);
+                        } else {
+
+                            showFieldError('password', result.error);
+                            showToast(result.error, true);
+                        }
+                    } catch (error) {
+                        console.error('Error en login:', error);
+                        showToast('Error al iniciar sesión. Intenta nuevamente.', true);
+                    } finally {
+                        toggleSpinner(false);
+                    }
+                });
+            });
         });
-    });
     </script>
     <script src="js/auth.js"></script>
     <script src="js/login-form.js"></script>
