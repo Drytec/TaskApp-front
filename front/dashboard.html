@@ -178,8 +178,7 @@
             document.getElementById('loadingIndicator').style.display = 'none';
             document.getElementById('kanbanBoard').style.display = 'flex';
         }
-
-
+        // Mostrar tareas en el tablero Kanban
         function displayTasks(tasks) {
 
             document.getElementById('todoColumn').innerHTML = '';
@@ -257,8 +256,14 @@
             `;
             return card;
         }
+        /**
+         * Format due date and optional time to a human-readable string in Spanish.
+         * @param {string} dateString - The due date in YYYY-MM-DD format.
+         * @param {string} [timeString] - Optional time string in HH:MM format.
+         * @returns {string} Formatted date string, e.g., "Hoy a las 14:00".
+         */
 
-
+        // Formatear fecha de vencimiento
         function formatDueDate(dateString, timeString) {
             if (!dateString) return '';
 
@@ -297,8 +302,12 @@
 
             return dateString;
         }
-
-
+        /**
+         * Format a date string for use in HTML date input.
+         * @param {string} dateString - Original date string.
+         * @returns {string} Formatted date in YYYY-MM-DD or empty string.
+         */
+        // Formatear fecha para input de tipo date
         function formatDateForInput(dateString) {
             if (!dateString) return '';
 
@@ -315,8 +324,13 @@
 
             return dateString;
         }
+        /**
+         * Format creation date of a task in a human-readable way.
+         * @param {string} dateString - Original date string.
+         * @returns {string} Formatted date string with relative day (Today/Yesterday) if applicable.
+         */
 
-
+        // Formatear fecha de creación (mantener para compatibilidad)
         function formatDate(dateString) {
             const date = new Date(dateString);
             const today = new Date();
@@ -331,8 +345,12 @@
                 return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
             }
         }
-
-
+        /**
+         * Toggle a task's completion status.
+         * @param {string} taskId - ID of the task to update.
+         * @param {boolean} isComplete - Whether the task is complete.
+         */
+        // Marcar tarea como completada/pendiente
         async function toggleTaskComplete(taskId, isComplete) {
 
             const status = isComplete ? 'Por hacer' : 'Hecho';
@@ -344,8 +362,12 @@
                 alert('Error al actualizar la tarea: ' + result.error);
             }
         }
-
-
+        /**
+         * Toggle a task's importance.
+         * @param {string} taskId - ID of the task.
+         * @param {boolean} isImportant - Whether the task is important.
+         */
+        // Marcar tarea como importante/normal
         async function toggleTaskImportant(taskId, isImportant) {
             const result = await updateTask(taskId, { isImportant });
 
@@ -355,8 +377,11 @@
                 alert('Error al actualizar la tarea: ' + result.error);
             }
         }
-
-
+        /**
+         * Delete a task by its ID after confirmation.
+         * @param {string} taskId - ID of the task to delete.
+         */
+        // Eliminar tarea
         async function deleteTaskById(taskId) {
             showModal("¿Estás seguro de que quieres eliminar esta tarea?", "error", true, async () => {
                 const result = await deleteTask(taskId);
@@ -368,8 +393,11 @@
                 }
             });
         }
-
-
+        /**
+         * Open a modal to edit a task and handle its submission.
+         * @param {string} taskId - ID of the task to edit.
+         */
+        // Editar tarea
         async function editTask(taskId) {
 
             const result = await getTask(taskId);
@@ -524,22 +552,25 @@
                 }
             });
         }
-
-
+        /**
+         * Close the task edit modal if it exists.
+         */
         function closeEditModal() {
             const modal = document.querySelector('.edit-modal');
             if (modal) {
                 document.body.removeChild(modal);
             }
         }
-
-
+        /**
+         * Navigate to the New Task page.
+         */
         function goToNewTask() {
             window.location.href = '/new-task';
         }
-
-
-        document.getElementById('searchInput').addEventListener('input', function (e) {
+        /**
+         * Filter tasks dynamically based on search input.
+         */
+        document.getElementById('searchInput').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
 
             if (searchTerm === '') {
@@ -552,15 +583,18 @@
                 displayTasks(filteredTasks);
             }
         });
-
-
+        /**
+         * Toggle user dropdown menu visibility.
+         */
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('show');
         }
-
-
-        window.onclick = function (event) {
+        /**
+         * Close the user dropdown when clicking outside.
+         * @param {Event} event - The click event.
+         */
+        window.onclick = function(event) {
             if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
                 const dropdown = document.getElementById('userDropdown');
                 if (dropdown.classList.contains('show')) {
@@ -568,18 +602,21 @@
                 }
             }
         }
-
-
-
-
+        /**
+         * Navigate to the user's profile page.
+         */
         function goToProfile() {
             window.location.href = '/profile';
         }
-
-
-
-
-
+        /**
+         * Navigate to settings page (currently a placeholder).
+         */
+        function goToSettings() {
+            alert('Función de configuración - próximamente');
+        }
+        /**
+         * Enable drag-and-drop for Kanban task columns.
+         */
         function enableDragAndDrop() {
             const columns = [
                 { id: 'todoColumn', newStatus: 'Por hacer' },
@@ -633,14 +670,18 @@
                         showModal("❌ Error al mover tarea: " + result.error, "error");
                         await loadAllTasks();
                     } else {
+                        /**
+                         * Update the task counters for each Kanban column.
+                         */
                         updateCounters();
                     }
                 });
 
             });
         }
-
-
+        /**
+         * Update the task counters for each Kanban column.
+         */
         function updateCounters() {
             document.getElementById('todoCount').textContent =
                 document.querySelectorAll('#todoColumn .task-card').length;
@@ -649,12 +690,49 @@
             document.getElementById('completedCount').textContent =
                 document.querySelectorAll('#completedColumn .task-card').length;
         }
-    </script>
-    <script>
+        </script>
+        <script>
+        /**
+         * Show a modal dialog.
+         * @param {string} message - Message to display.
+         * @param {string} [type="success"] - Type of modal: "success" or "error".
+         * @param {boolean} [withCancel=false] - Whether to show a Cancel button.
+         * @param {Function} [onConfirm=null] - Callback executed when OK is clicked.
+         */
+        function showModal(message, type="success", withCancel=false, onConfirm=null) {
+        const modal=document.getElementById("feedbackModal");
+        const msg=document.getElementById("modalMessage");
+        const buttons=document.getElementById("modalButtons");
 
+        msg.textContent=message;
+        document.getElementById("modalContent").className=`modal-box ${type}`;
 
+        // Botones
+        buttons.innerHTML="";
+        const ok=document.createElement("button");
+        ok.textContent="OK"; ok.className="ok-btn";
+        ok.onclick=()=>{ closeModal(); if(onConfirm) onConfirm(); };
+        buttons.appendChild(ok);
 
+        if(withCancel){
+            const cancel=document.createElement("button");
+            cancel.textContent="Cancelar"; cancel.className="cancel-btn";
+            cancel.onclick=()=>{ closeModal(); };
+            buttons.appendChild(cancel);
+        }
 
+        modal.style.display="flex";
+        }
+
+        /**
+         * Close the currently visible modal.
+         */
+        function closeModal(){ 
+        document.getElementById("feedbackModal").style.display="none"; 
+        }
+        /**
+         * Show logout confirmation modal and execute logout.
+         */
         function handleLogout() {
             showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
                 logout();

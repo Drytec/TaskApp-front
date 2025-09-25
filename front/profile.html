@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskApp - Mi Perfil</title>
+    <title>TaskApp - My Profile</title>
     <link rel="stylesheet" href="/src/css/profile.css">
-    <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
+    <!--
+        @file profile.html
+        @description Profile page for TaskApp (TicTask). Displays user personal information
+                     including name, lastname, age, email, registration date, and avatar initials.
+    -->
 </head>
 <body>
 
@@ -15,28 +19,28 @@
                 <h1 class="logo">TicTask</h1>
             </a>
         </div>
-        
         <div class="header-center">
-            <h2 class="page-title"></h2>
+            <h2 class="page-title">My Profile</h2>
         </div>
-        
         <div class="header-right">
-            <button class="back-btn" onclick="goToDashboard()">Volver al Dashboard</button>
+            <button class="back-btn" onclick="goToDashboard()">Back to Dashboard</button>
             <div class="user-menu" onclick="toggleDropdown()">
                 <div class="user-avatar" id="userAvatar">U</div>
-                <span class="user-name" id="userName">Usuario</span>
+                <span class="user-name" id="userName">User</span>
                 <div class="dropdown-icon">▼</div>
-            
                 <div class="dropdown-menu" id="userDropdown">
                     <div class="dropdown-item" onclick="goToProfile()">
                         <span class="dropdown-icon-item">👤</span>
-                        <span>Mi perfil</span>
+                        <span>My Profile</span>
                     </div>
-
+                    <div class="dropdown-item" onclick="goToSettings()">
+                        <span class="dropdown-icon-item">⚙️</span>
+                        <span>Settings</span>
+                    </div>
                     <div class="dropdown-divider"></div>
                     <div class="dropdown-item logout" onclick="handleLogout()">
                         <span class="dropdown-icon-item">🚪</span>
-                        <span>Cerrar sesión</span>
+                        <span>Logout</span>
                     </div>
                 </div>
             </div>
@@ -46,44 +50,30 @@
         <div class="profile-container">
             <div class="profile-header">
                 <div class="profile-avatar" id="profileAvatar">U</div>
-                <h2 class="profile-title">Información Personal</h2>
-                <button class="edit-btn" onclick="goToEditProfile()">
-                    <span>✏️</span>
-                    Editar
-                </button>
+                <h2 class="profile-title">Personal Information</h2>
+                <button class="edit-btn" onclick="goToEditProfile()">✏️ Edit</button>
             </div>
             
             <div class="profile-info">
                 <div class="info-group">
-                    <label class="info-label">Nombres:</label>
-                    <div class="info-value" id="userFirstName">Cargando...</div>
+                    <label class="info-label">First Name:</label>
+                    <div class="info-value" id="userFirstName">Loading...</div>
                 </div>
-                
                 <div class="info-group">
-                    <label class="info-label">Apellidos:</label>
-                    <div class="info-value" id="userLastName">Cargando...</div>
+                    <label class="info-label">Last Name:</label>
+                    <div class="info-value" id="userLastName">Loading...</div>
                 </div>
-                
                 <div class="info-group">
-                    <label class="info-label">Edad:</label>
-                    <div class="info-value" id="userAge">Cargando...</div>
+                    <label class="info-label">Age:</label>
+                    <div class="info-value" id="userAge">Loading...</div>
                 </div>
-                
                 <div class="info-group">
-                    <label class="info-label">Correo:</label>
-                    <div class="info-value" id="userEmail">Cargando...</div>
+                    <label class="info-label">Email:</label>
+                    <div class="info-value" id="userEmail">Loading...</div>
                 </div>
-                
                 <div class="info-group">
-                    <label class="info-label">Fecha de registro:</label>
-                    <div class="info-value" id="userCreatedAt">Cargando...</div>
-                </div>
-
-                <div class="delete-account-container">
-                    <button class="delete-account-btn" onclick="handleDeleteAccount()">
-                        <span>🗑️</span>
-                        Eliminar cuenta
-                    </button>
+                    <label class="info-label">Registration Date:</label>
+                    <div class="info-value" id="userCreatedAt">Loading...</div>
                 </div>
             </div>
         </div>
@@ -97,22 +87,26 @@
     </div>
     <script src="../js/auth.js"></script>
     <script>
+        /**
+         * @description Initialize profile page by checking authentication and loading user info.
+         */
         document.addEventListener('DOMContentLoaded', async function() {
             const isAuthenticated = await checkAuth();
-            
             if (!isAuthenticated) {
                 window.location.href = '/';
                 return;
             }
-            
             await loadUserInfo();
         });
-        
+
+        /**
+         * @description Fetches user information from API and updates DOM elements.
+         */
         async function loadUserInfo() {
             try {
                 const token = localStorage.getItem('authToken');
-                if (!token) throw new Error('No se encontró el token');
-                
+                if (!token) throw new Error('Token not found');
+
                 const response = await fetch(`${API_URL}/users/me`, {
                     method: 'GET',
                     headers: {
@@ -120,30 +114,28 @@
                         'Content-Type': 'application/json'
                     }
                 });
-                
-                if (!response.ok) throw new Error('Error al obtener información del usuario');
-                
+
+                if (!response.ok) throw new Error('Failed to fetch user information');
+
                 const userData = await response.json();
-                console.log('Datos del usuario:', userData);
-                
-                document.getElementById('userName').textContent = userData.name || 'Usuario';
-                document.getElementById('userFirstName').textContent = userData.name || 'No disponible';
-                document.getElementById('userLastName').textContent = userData.lastname || 'No disponible';
-                document.getElementById('userAge').textContent = userData.age || 'No disponible';
-                document.getElementById('userEmail').textContent = userData.email || 'No disponible';
-                
+                console.log('User data:', userData);
+
+                document.getElementById('userName').textContent = userData.name || 'User';
+                document.getElementById('userFirstName').textContent = userData.name || 'Unavailable';
+                document.getElementById('userLastName').textContent = userData.lastname || 'Unavailable';
+                document.getElementById('userAge').textContent = userData.age || 'Unavailable';
+                document.getElementById('userEmail').textContent = userData.email || 'Unavailable';
+
                 if (userData.createdAt) {
                     const createdDate = new Date(userData.createdAt);
                     const formattedDate = createdDate.toLocaleDateString('es-ES', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
+                        day: '2-digit', month: '2-digit', year: 'numeric'
                     });
                     document.getElementById('userCreatedAt').textContent = formattedDate;
                 } else {
-                    document.getElementById('userCreatedAt').textContent = 'No disponible';
+                    document.getElementById('userCreatedAt').textContent = 'Unavailable';
                 }
-                
+
                 if (userData.name) {
                     const initials = userData.name.charAt(0).toUpperCase();
                     document.getElementById('userAvatar').textContent = initials;
@@ -151,19 +143,29 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al cargar la información del usuario: ' + error.message);
+                alert('Error loading user information: ' + error.message);
             }
         }
-        
+
+        /**
+         * @description Navigate to the dashboard page.
+         */
         function goToDashboard() {
             window.location.href = '/dashboard';
         }
-        
+
+        /**
+         * @description Toggle the user dropdown menu visibility.
+         */
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('show');
         }
 
+        /**
+         * @description Close the dropdown menu if clicked outside.
+         * @param {Event} event - Mouse click event
+         */
         window.onclick = function(event) {
             if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
                 const dropdown = document.getElementById('userDropdown');
@@ -173,18 +175,32 @@
             }
         }
 
+        /**
+         * @description Handle user logout with confirmation.
+         */
         function handleLogout() {
-        showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
-            logout(); 
-        });
+            if (confirm('Are you sure you want to logout?')) {
+                logout();
+            }
         }
 
+        /**
+         * @description Navigate to the profile page.
+         */
         function goToProfile() {
             window.location.href = '/profile';
         }
 
+        /**
+         * @description Placeholder for settings page navigation.
+         */
+        function goToSettings() {
+            alert('Settings feature coming soon');
+        }
 
-
+        /**
+         * @description Navigate to edit profile page.
+         */
         function goToEditProfile() {
             window.location.href = '/edit-profile';
         }
@@ -215,3 +231,4 @@
     </script>
 </body>
 </html>
+

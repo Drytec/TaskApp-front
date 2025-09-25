@@ -6,7 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskApp - Dashboard</title>
     <link rel="stylesheet" href="/src/css/welcome-dashboard.css">
-    <link rel="icon" type="image/png" href="/public/favicon.jpeg" />
+    <!--
+        @file dashboard.html
+        @description Dashboard page for TaskApp (TicTask). Displays a welcome greeting,
+                     user avatar, stats of tasks (to-do, in-progress, completed),
+                     action cards (view tasks, create task), and quick add task section.
+                     Includes modal for feedback messages.
+        @scripts
+            /js/auth.js: authentication logic, logout
+            /js/tasks.js: fetch and create tasks
+    -->
 </head>
 
 <body>
@@ -50,18 +59,19 @@
         </div>
 
         <div class="stats-container">
+            <!-- To-do tasks -->
             <div class="stat-card por-hacer">
                 <div class="stat-icon">📋</div>
                 <div class="stat-number" id="todoCount">0</div>
                 <div class="stat-label">Por hacer</div>
             </div>
-
+            <!-- In-progress tasks -->
             <div class="stat-card en-progreso">
                 <div class="stat-icon">⚡</div>
                 <div class="stat-number" id="inProgressCount">0</div>
                 <div class="stat-label">En progreso</div>
             </div>
-
+            <!-- Completed tasks -->
             <div class="stat-card completadas">
                 <div class="stat-icon">✅</div>
                 <div class="stat-number" id="completedCount">0</div>
@@ -70,22 +80,20 @@
         </div>
 
         <div class="action-cards">
+            <!-- View tasks -->
             <div class="action-card">
                 <div class="action-icon ver-tareas">📊</div>
                 <h3 class="action-title">Ver mis tareas</h3>
                 <p class="action-description">Revisa, edita y organiza todas tus tareas en una vista completa</p>
-                <a href="/dashboard" class="action-button primary">
-                    📋 Ir a mis tareas
-                </a>
+                <a href="/dashboard" class="action-button primary">📋 Ir a mis tareas</a>
             </div>
 
+            <!-- Create task -->
             <div class="action-card">
                 <div class="action-icon nueva-tarea">➕</div>
                 <h3 class="action-title">Nueva tarea</h3>
                 <p class="action-description">Crea una nueva tarea con todos los detalles que necesites</p>
-                <button class="action-button secondary" onclick="createNewTask()">
-                    ✏️ Crear tarea
-                </button>
+                <button class="action-button secondary" onclick="createNewTask()">✏️ Crear tarea</button>
             </div>
         </div>
 
@@ -100,6 +108,8 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal -->
     <div class="modal-overlay" id="feedbackModal">
         <div class="modal-box" id="modalContent">
             <p id="modalMessage"></p>
@@ -107,28 +117,26 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="/js/auth.js"></script>
     <script src="/js/tasks.js"></script>
+
     <script>
-
-        document.addEventListener('DOMContentLoaded', async function () {
-            if (!isAuthenticated()) {
-                window.location.href = '/login';
-                return;
-            }
-
-
+        /**
+         * Verify authentication and load user data when the page loads.
+         */
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (!isAuthenticated()) window.location.href = '/login';
             loadUserInfo();
-
-
             await loadTaskStats();
         });
 
-
+        /**
+         * Load the logged-in user's information and update UI elements.
+         */
         async function loadUserInfo() {
             const token = getToken();
             if (!token) return;
-
             try {
                 const response = await fetch(`${API_URL}/users/me`, {
                     method: "GET",
@@ -137,138 +145,143 @@
                         "Content-Type": "application/json"
                     }
                 });
-
                 if (response.ok) {
                     const user = await response.json();
-
                     const firstName = user.name;
-
                     document.getElementById('greeting').textContent = `Hola, ${firstName} 👋`;
                     document.getElementById('userName').textContent = firstName;
-                    document.getElementById('userAvatar').textContent = firstName
-                        ? firstName.charAt(0).toUpperCase()
-                        : "U";
+                    document.getElementById('userAvatar').textContent = firstName ? firstName.charAt(0).toUpperCase() : "U";
                     document.getElementById('welcomeTitle').textContent = `¡Bienvenido, ${firstName}!`;
                 }
-            } catch (e) {
-                console.error("Error cargando usuario:", e);
-            }
+            } catch (e) { console.error("Error cargando usuario:", e); }
         }
 
-
+        /**
+         * Load task statistics and update the counters.
+         */
         async function loadTaskStats() {
             const result = await getAllTasks();
-
             if (result.success) {
                 const tasks = result.data;
-
-
-                let todoCount = 0;
-                let inProgressCount = 0;
-                let completedCount = 0;
-
+                let todoCount = 0, inProgressCount = 0, completedCount = 0;
                 tasks.forEach(task => {
-                    if (task.isComplete) {
-                        completedCount++;
-                    } else if (task.isImportant) {
-
-                        inProgressCount++;
-                    } else {
-                        todoCount++;
-                    }
+                    if (task.isComplete) completedCount++;
+                    else if (task.isImportant) inProgressCount++;
+                    else todoCount++;
                 });
-
-
                 document.getElementById('todoCount').textContent = todoCount;
                 document.getElementById('inProgressCount').textContent = inProgressCount;
                 document.getElementById('completedCount').textContent = completedCount;
             }
         }
 
-
+        /**
+         * Toggle user dropdown menu.
+         */
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('show');
         }
 
+        /**
+         * Navigate to profile page.
+         */
+        function goToProfile() { window.location.href = '/profile'; }
 
-        window.onclick = function (event) {
-            if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
-                const dropdown = document.getElementById('userDropdown');
-                if (dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
-                }
-            }
-        }
+        /**
+         * Show settings alert (placeholder).
+         */
+        function goToSettings() { alert('Función de configuración - próximamente'); }
 
+        /**
+         * Navigate to new task page.
+         */
+        function createNewTask() { window.location.href = '/new-task'; }
 
-
-
-
-        function goToProfile() {
-            window.location.href = '/profile';
-        }
-
-
-
-
-        function createNewTask() {
-            window.location.href = '/new-task';
-        }
-
-
+        /**
+         * Add a quick task from the dashboard input.
+         */
         async function addQuickTask() {
             const input = document.getElementById('quickTaskInput');
             const btn = document.getElementById('quickAddBtn');
             const taskText = input.value.trim();
+            if (!taskText) return alert('Por favor, escribe una tarea');
 
-            if (taskText) {
-
-                btn.disabled = true;
-                btn.textContent = 'Agregando...';
-
-
-                const result = await createTask({
-                    taskName: taskText,
-                    taskDescription: 'Tarea creada desde el dashboard',
-                    isImportant: false
-                });
-
-                if (result.success) {
-
-                    input.value = '';
-
-                    showModal(`✅ Tarea "${taskText}" agregada exitosamente`, "success", false, () => {
-                        // Callback opcional después de cerrar el modal
-                    });
-
-                    await loadTaskStats();
-                } else {
-                    showModal(`❌ Error: ${result.error}`, "error");
-                }
-
-
-                btn.disabled = false;
-                btn.textContent = 'Agregar';
+            btn.disabled = true; btn.textContent = 'Agregando...';
+            const result = await createTask({
+                taskName: taskText,
+                taskDescription: 'Tarea creada desde el dashboard',
+                isImportant: false
+            });
+            if (result.success) {
+                input.value = '';
+                alert(`✅ Tarea "${taskText}" agregada exitosamente`);
+                await loadTaskStats();
             } else {
-                showModal('⚠️ Por favor, escribe una tarea', "warning");
+                alert(`❌ Error: ${result.error}`);
             }
+            btn.disabled = false; btn.textContent = 'Agregar';
         }
 
-
-        document.getElementById('quickTaskInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                addQuickTask();
-            }
+        /**
+         * Allow Enter key to submit quick task.
+         */
+        document.getElementById('quickTaskInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addQuickTask();
         });
 
+        /**
+         * Show modal with optional cancel button.
+         * @param {string} message - Message to display
+         * @param {string} type - Modal type (success, error, warning)
+         * @param {boolean} withCancel - Show cancel button
+         * @param {Function|null} onConfirm - Callback for OK button
+         */
+        function showModal(message, type="success", withCancel=false, onConfirm=null) {
+            const modal = document.getElementById("feedbackModal");
+            const msg = document.getElementById("modalMessage");
+            const buttons = document.getElementById("modalButtons");
+            msg.textContent = message;
+            document.getElementById("modalContent").className = `modal-box ${type}`;
+
+            buttons.innerHTML = "";
+            const ok = document.createElement("button");
+            ok.textContent = "OK"; ok.className="ok-btn";
+            ok.onclick = () => { closeModal(); if(onConfirm) onConfirm(); };
+            buttons.appendChild(ok);
+
+            if(withCancel){
+                const cancel = document.createElement("button");
+                cancel.textContent = "Cancelar"; cancel.className="cancel-btn";
+                cancel.onclick = () => { closeModal(); };
+                buttons.appendChild(cancel);
+            }
+
+            modal.style.display="flex";
+        }
+
+        /**
+         * Close modal window.
+         */
+        function closeModal() { document.getElementById("feedbackModal").style.display="none"; }
+
+        /**
+         * Logout user with confirmation modal.
+         */
         function handleLogout() {
             showModal("¿Estás seguro de que quieres cerrar sesión?", "error", true, () => {
-                logout();
+                logout(); // defined in auth.js
             });
         }
-    </script>
 
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
+                const dropdown = document.getElementById('userDropdown');
+                if (dropdown.classList.contains('show')) dropdown.classList.remove('show');
+            }
+        };
+    </script>
 </body>
 
 </html>
