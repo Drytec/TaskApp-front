@@ -1,4 +1,7 @@
-const API_URL = "http://localhost:5100/api";
+const API_URL =
+  window.location.hostname.includes("localhost")
+    ? "/api"
+    : "https://taskapp-aaph.onrender.com/api";
 
 function saveToken(token) {
   localStorage.setItem("authToken", token);
