@@ -238,20 +238,20 @@
 
                     input.value = '';
 
-
-                    alert(`✅ Tarea "${taskText}" agregada exitosamente`);
-
+                    showModal(`✅ Tarea "${taskText}" agregada exitosamente`, "success", false, () => {
+                        // Callback opcional después de cerrar el modal
+                    });
 
                     await loadTaskStats();
                 } else {
-                    alert(`❌ Error: ${result.error}`);
+                    showModal(`❌ Error: ${result.error}`, "error");
                 }
 
 
                 btn.disabled = false;
                 btn.textContent = 'Agregar';
             } else {
-                alert('Por favor, escribe una tarea');
+                showModal('⚠️ Por favor, escribe una tarea', "warning");
             }
         }
 

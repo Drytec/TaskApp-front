@@ -289,9 +289,57 @@ body {
     font-size: 16px;
 }
 
-.column.drag-over {
-    background-color: rgba(0, 128, 255, 0.1);
-    border: 2px dashed #0080ff;
+.column-content.drag-over {
+    background-color: rgba(99, 102, 241, 0.1);
+    border: 2px dashed #6366f1;
+    border-radius: 8px;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+/* Estilos para la tarea que se está arrastrando */
+.task-card.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+    transition: all 0.2s ease;
+}
+
+/* Estilos para el área de drop cuando se está arrastrando */
+.kanban-column.drag-over .column-header {
+    background-color: rgba(99, 102, 241, 0.1);
+    border-radius: 8px 8px 0 0;
+    transition: all 0.2s ease;
+}
+
+.kanban-column.drag-over .column-title {
+    color: #6366f1;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+/* Efecto de pulso para la columna de destino */
+.column-content.drag-over::before {
+    content: "Suelta aquí";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(99, 102, 241, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 10;
+    pointer-events: none;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
 }
 
 
@@ -310,6 +358,7 @@ body {
     flex-direction: column;
     gap: 12px;
     min-height: 400px;
+    position: relative;
 }
 
 
@@ -549,6 +598,52 @@ body {
 
 .modal-box.error button:hover {
     background: #940000;
+}
+
+/* Estilos para modales de tipo warning con botones diferenciados */
+.modal-box.warning .modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.modal-box.warning button:first-child {
+    background: #ef4444; /* Rojo para acción destructiva */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.modal-box.warning button:last-child {
+    background: white; /* Blanco para cancelar */
+    color: #374151;
+    border: 1px solid #d1d5db; /* Borde gris */
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.modal-box.warning button:first-child:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.modal-box.warning button:last-child:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes slideDown {

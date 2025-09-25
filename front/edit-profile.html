@@ -12,11 +12,10 @@
 <body>
   <header class="header">
     <div class="header-left">
-      <a href="/edit-profile" class="logo-link">
+      <a href="/welcome-dashboard" class="logo-link">
         <h1 class="logo">TicTask</h1>
       </a>
     </div>
-
 
     <div class="header-right">
       <button class="back-btn" onclick="goToProfile()">Volver al perfil</button>
@@ -62,8 +61,14 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="cancelEdit()">Cancelar</button>
-          <button type="submit" class="btn-save">Guardar cambios</button>
+          <button type="button" class="btn-cancel" onclick="cancelEdit()">
+            <span>✕</span>
+            Cancelar
+          </button>
+          <button type="submit" class="btn-save">
+            <span>💾</span>
+            Guardar cambios
+          </button>
         </div>
       </form>
     </div>
@@ -174,6 +179,15 @@
       dropdown.classList.toggle('show');
     }
 
+    // Cerrar dropdown al hacer clic fuera
+    window.onclick = function(event) {
+      if (!event.target.matches('.user-menu') && !event.target.closest('.user-menu')) {
+        const dropdown = document.getElementById('userDropdown');
+        if (dropdown.classList.contains('show')) {
+          dropdown.classList.remove('show');
+        }
+      }
+    }
 
   </script>
 </body>

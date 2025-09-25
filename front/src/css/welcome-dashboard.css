@@ -325,7 +325,9 @@ a {
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-width: 160px;
+    width: 200px;
+    display: block;
+    margin: 0 auto;
 }
 
 .action-button.primary {
@@ -573,6 +575,52 @@ a {
 
 .modal-box.error button:hover {
     background: #940000;
+}
+
+/* Estilos para modales de tipo warning con botones diferenciados */
+.modal-box.warning .modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.modal-box.warning button:first-child {
+    background: #ef4444; /* Rojo para acción destructiva */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.modal-box.warning button:last-child {
+    background: white; /* Blanco para cancelar */
+    color: #374151;
+    border: 1px solid #d1d5db; /* Borde gris */
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.modal-box.warning button:first-child:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.modal-box.warning button:last-child:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes slideDown {
