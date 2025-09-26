@@ -583,7 +583,6 @@
 
 
         function enableDragAndDrop() {
-            console.log('🔧 Iniciando enableDragAndDrop...');
             const columns = [
                 { id: 'todoColumn', newStatus: 'Por hacer' },
                 { id: 'inProgressColumn', newStatus: 'Haciendo' },
@@ -592,43 +591,28 @@
 
             columns.forEach(col => {
                 const element = document.getElementById(col.id);
-                
-                if (!element) {
-                    console.error(`❌ Elemento con ID ${col.id} no encontrado`);
-                    return;
-                }
-                
-                console.log(`✅ Configurando drag and drop para ${col.id}`);
 
-                // Eventos para la columna de contenido
                 element.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     element.classList.add("drag-over");
-                    console.log(`🎯 dragover en ${col.id}`);
                 });
 
                 element.addEventListener('dragleave', (e) => {
-                    // Solo remover la clase si realmente salimos de la columna
                     if (!element.contains(e.relatedTarget)) {
                         element.classList.remove("drag-over");
-                        console.log(`👋 dragleave de ${col.id}`);
                     }
                 });
 
                 element.addEventListener('drop', async (e) => {
                     e.preventDefault();
                     element.classList.remove("drag-over");
-                    console.log(`🎯 drop en ${col.id}`);
 
                     const taskId = e.dataTransfer.getData('taskId');
-                    console.log(`📋 TaskId recibido: ${taskId}`);
-                    
                     if (!taskId) return;
 
                     const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
                     if (taskElement) {
                         element.appendChild(taskElement);
-                        console.log(`✅ Tarea movida a ${col.id}`);
 
                         const statusSpan = taskElement.querySelector('.task-status');
                         if (statusSpan) {
@@ -648,7 +632,6 @@
                         updateCounters();
                     }
                 });
-
             });
         }
 

@@ -168,12 +168,11 @@
                 let completedCount = 0;
 
                 tasks.forEach(task => {
-                    if (task.isComplete) {
+                    if (task.status === "Hecho") {
                         completedCount++;
-                    } else if (task.isImportant) {
-
+                    } else if (task.status === "Haciendo") {
                         inProgressCount++;
-                    } else {
+                    } else if (task.status === "Por hacer") {
                         todoCount++;
                     }
                 });
@@ -231,8 +230,10 @@
                 const result = await createTask({
                     taskName: taskText,
                     taskDescription: 'Tarea creada desde el dashboard',
+                    status: 'Por hacer', 
                     isImportant: false
                 });
+
 
                 if (result.success) {
 
