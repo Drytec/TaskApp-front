@@ -589,27 +589,21 @@
 
             columns.forEach(col => {
                 const element = document.getElementById(col.id);
-                const columnContent = element.querySelector('.column-content');
 
-                // Eventos para la columna completa
                 element.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     element.classList.add("drag-over");
-                    columnContent.classList.add("drag-over");
                 });
 
                 element.addEventListener('dragleave', (e) => {
-                    // Solo remover la clase si realmente salimos de la columna
                     if (!element.contains(e.relatedTarget)) {
                         element.classList.remove("drag-over");
-                        columnContent.classList.remove("drag-over");
                     }
                 });
 
                 element.addEventListener('drop', async (e) => {
                     e.preventDefault();
                     element.classList.remove("drag-over");
-                    columnContent.classList.remove("drag-over");
 
                     const taskId = e.dataTransfer.getData('taskId');
                     if (!taskId) return;
@@ -636,7 +630,6 @@
                         updateCounters();
                     }
                 });
-
             });
         }
 
