@@ -226,10 +226,12 @@
             card.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('taskId', task._id);
                 card.classList.add('dragging');
+                console.log(`🚀 Iniciando drag de tarea: ${task._id}`);
             });
 
             card.addEventListener('dragend', (e) => {
                 card.classList.remove('dragging');
+                console.log(`🏁 Finalizando drag de tarea: ${task._id}`);
             });
 
 
